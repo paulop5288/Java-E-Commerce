@@ -12,7 +12,7 @@ public class SignUpServlet extends HttpServlet {
 	String email = "", password = "", cpassword = "", title = "", fname = "",
 			lname = "", qualification = "", organisation = "",
 			specialisation = "";
-			
+
 	//Article credentials
 	String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
 	int authorid=0;
@@ -35,7 +35,14 @@ public class SignUpServlet extends HttpServlet {
 		String dbname = "team158";
 		String user = "team158";
 		String myPassword = "9a5b309d";
-		
+
+		//Article submission parameters
+		articleTitle=req.getParameter("articletitle");
+		articleAbstract = req.getParameter("articleabstract");
+		coauthors = req.getParameter("coauthors");
+		keywords = req.getParameter("keywords");
+
+		//Author Registration Parameters
 		email = req.getParameter("email");
 		password = req.getParameter("password");
 		cpassword = req.getParameter("cpassword");
@@ -73,6 +80,7 @@ public class SignUpServlet extends HttpServlet {
 		
 		
 		PreparedStatement pstmt = null;
+		PreparedStatement pstmtArticle = null;
 
 		try {
 			dbCon = DriverManager.getConnection(dbServer + dbname, user,
@@ -90,6 +98,18 @@ public class SignUpServlet extends HttpServlet {
 			pstmt.setString(8, organisation);
 			pstmt.setString(9, specialisation);
 			int count = pstmt.executeUpdate();
+
+
+			//Handles article submission, However, we need a fileupload wrapper for this to work on this tomcat server
+			authorid=count;
+			pstmtArticle = dbCon.prepareStatement(
+  				"INSERT INTO article(authorID,title,Other_authors,abstract,keywords) VALUES (null, ?, ?,?,?,?)");
+			pstmtArticle.setInt(1,authorid);
+			pstmtArticle.setString(2,articleTitle);
+			pstmtArticle.setString(3,coauthors);
+			pstmtArticle.setString(4,articleabstract);
+			pstmtArticle.setString(5,keywords);
+			int count = pstmtArticle.executeUpdate();
 
 		} catch (SQLException ex) {
 
