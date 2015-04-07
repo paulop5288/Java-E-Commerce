@@ -12,6 +12,10 @@ public class SignUpServlet extends HttpServlet {
 	String email = "", password = "", cpassword = "", title = "", fname = "",
 			lname = "", qualification = "", organisation = "",
 			specialisation = "";
+			
+	//Article credentials
+	String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
+	int authorid=0;
 	int role = 1, count = 0;
 	Connection dbCon = null; // connection to a database
 
@@ -75,7 +79,7 @@ public class SignUpServlet extends HttpServlet {
 					myPassword);
 			// Get connection to team database
 			pstmt = dbCon
-					.prepareStatement("INSERT INTO user VALUES (null, ?, ?,?,?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?,?)");
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
 			pstmt.setInt(3, role);
