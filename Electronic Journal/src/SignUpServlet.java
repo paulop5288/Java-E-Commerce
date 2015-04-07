@@ -9,15 +9,15 @@ import com.mysql.jdbc.Driver;
 
 public class SignUpServlet extends HttpServlet {
 
-	String email = "", password = "", cpassword = "", title = "", fname = "",
+	private String email = "", password = "", cpassword = "", title = "", fname = "",
 			lname = "", qualification = "", organisation = "",
 			specialisation = "";
 
 	//Article credentials
-	String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
-	int authorid=0;
-	int role = 1, count = 0;
-	Connection dbCon = null; // connection to a database
+	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
+	private int authorid=0;
+	private int role = 1, count = 0;
+	private Connection dbCon = null; // connection to a database
 
 	public SignUpServlet() {
 		super();
@@ -107,9 +107,9 @@ public class SignUpServlet extends HttpServlet {
 			pstmtArticle.setInt(1,authorid);
 			pstmtArticle.setString(2,articleTitle);
 			pstmtArticle.setString(3,coauthors);
-			pstmtArticle.setString(4,articleabstract);
+			pstmtArticle.setString(4,articleAbstract);
 			pstmtArticle.setString(5,keywords);
-			int count = pstmtArticle.executeUpdate();
+			pstmtArticle.executeUpdate();
 
 		} catch (SQLException ex) {
 
