@@ -56,7 +56,7 @@ public class SignUpServlet extends HttpServlet {
 		out.println("<html><body>");
 
 		//Start session management here
-		HTTPSession session = req.getSession(true);
+		HttpSession session = req.getSession(true);
 		
 
 		if (email.trim().compareTo("") == 0) {
