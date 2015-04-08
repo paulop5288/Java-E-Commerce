@@ -49,27 +49,25 @@ public class SignUpServlet extends HttpServlet {
 		lname = req.getParameter("lname");
 		fname = req.getParameter("fname");
 		organisation = req.getParameter("organisation");
+
+		//Prepare HTML page for output
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter();
+		out.println("<html><body>");
+		
+
 		if (email.trim().compareTo("") == 0) {
-			res.setContentType("text/html");
-			PrintWriter out = res.getWriter();
-			out.println("<html><body>");
 			out.println("Email address cannot be empty.");
 			out.println("</body></html>");
 			return;
 		}
 		
 		if (password.compareTo(cpassword) != 0) {
-			res.setContentType("text/html");
-			PrintWriter out = res.getWriter();
-			out.println("<html><body>");
 			out.println("Password and Confirmed password should be the same.");
 			out.println("</body></html>");
 			return;
 		}
 		if (password.trim().compareTo("") == 0) {
-			res.setContentType("text/html");
-			PrintWriter out = res.getWriter();
-			out.println("<html><body>");
 			out.println("Password cannot be empty.");
 			out.println("</body></html>");
 			return;
@@ -125,10 +123,8 @@ public class SignUpServlet extends HttpServlet {
 				} catch (SQLException ex) {
 				}
 		}
-		res.setContentType("text/html");
-		PrintWriter out = res.getWriter();
+		
 
-		out.println("<html><body>");
 		out.println("Hello " + fname
 				+ ", You have succesfully registered as an author");
 		out.println("</body></html>");
