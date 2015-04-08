@@ -54,6 +54,9 @@ public class SignUpServlet extends HttpServlet {
 		res.setContentType("text/html");
 		PrintWriter out = res.getWriter();
 		out.println("<html><body>");
+
+		//Start session management here
+		HTTPSession session = req.getSession(true);
 		
 
 		if (email.trim().compareTo("") == 0) {
@@ -85,19 +88,24 @@ public class SignUpServlet extends HttpServlet {
 					myPassword);
 			// Get connection to team database
 			pstmt = dbCon
-					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?)");
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
-			pstmt.setInt(3, role);
-			pstmt.setString(4, title);
-			pstmt.setString(5, fname);
-			pstmt.setString(6, lname);
-			pstmt.setString(7, qualification);
-			pstmt.setString(8, organisation);
-			pstmt.setString(9, specialisation);
+			pstmt.setString(3, title);
+			pstmt.setString(4, fname);
+			pstmt.setString(5, lname);
+			pstmt.setString(6, qualification);
+			pstmt.setString(7, organisation);
+			pstmt.setString(8, specialisation);
 			int count = pstmt.executeUpdate();
 
+			if(count > 0){
+				out.println("Author Registration was successful");
+				session.setAttribute("username",email);
+				session.setAttribute("password",password);
+				session.setAttribute("role","author");
 
+			}
 			//Handles article submission, However, we need a fileupload wrapper for this to work on this tomcat server
 			authorid=count;
 			pstmtArticle = dbCon.prepareStatement(
@@ -107,11 +115,17 @@ public class SignUpServlet extends HttpServlet {
 			pstmtArticle.setString(3,coauthors);
 			pstmtArticle.setString(4,articleAbstract);
 			pstmtArticle.setString(5,keywords);
-			pstmtArticle.executeUpdate();
+			count = 0;
+			count=pstmtArticle.executeUpdate();
+			if(count > 0){
+				out.println("Article submission was successful");
+				session.setAttribute("article",articleTitle);
+			}
 
 		} catch (SQLException ex) {
 
 			ex.printStackTrace();
+			out.println("Article upload or Author Registration Error");
 
 			return;
 		}
