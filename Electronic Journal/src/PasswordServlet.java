@@ -41,7 +41,7 @@ public class PasswordServlet extends HttpServlet {
 		String oldPassword = request.getParameter("oldpassword");
 		String newPassword = request.getParameter("password");
 		String confirmedPassword = request.getParameter("cpassword");
-		String query = "update user set password = '" + newPassword + "'"
+		String query = "update author set password = '" + newPassword + "'"
 						+ " where username = '" + username + "' and " + "password = '" + oldPassword + "';";
 		Connection con = null;
 		Statement stmt = null;
