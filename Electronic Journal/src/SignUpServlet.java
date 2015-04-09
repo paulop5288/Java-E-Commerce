@@ -41,7 +41,7 @@ public class SignUpServlet extends HttpServlet {
 		articleAbstract = req.getParameter("articleabstract");
 		coauthors = req.getParameter("coauthors");
 		keywords = req.getParameter("keywords");
-
+		
 		//Author Registration Parameters
 		email = req.getParameter("email");
 		password = req.getParameter("password");
@@ -53,7 +53,7 @@ public class SignUpServlet extends HttpServlet {
 		//Prepare HTML page for output
 		res.setContentType("text/html");
 		PrintWriter out = res.getWriter();
-		out.println("<html><body>");
+		out.println("<%@ include file=\"stucat008/includes/authorheader.jsp\"");
 
 		//Start session management here
 		HttpSession session = req.getSession(true);
