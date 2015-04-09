@@ -100,7 +100,7 @@ public class SignUpServlet extends HttpServlet {
 			int count = pstmt.executeUpdate();
 
 			if(count > 0){
-				out.println("Author Registration was successful");
+				out.println("Author Registration was successful<br/>");
 				session.setAttribute("username",email);
 				session.setAttribute("password",password);
 				session.setAttribute("role","author");
@@ -125,7 +125,7 @@ public class SignUpServlet extends HttpServlet {
 		} catch (SQLException ex) {
 
 			ex.printStackTrace();
-			out.println("Article upload or Author Registration Error");
+			out.println("Article upload or Author Registration Error:" + ex.getMessage());
 
 			return;
 		}
