@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
 		}
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
-		String query = "select * from user where" + " username = '" + username
+		String query = "select * from author where" + " username = '" + username
 				+ "' and " + "password = '" + password + "';";
 
 		Connection con = null;
