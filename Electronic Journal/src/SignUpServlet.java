@@ -1,17 +1,14 @@
 import java.io.*;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 import java.sql.*;
-
 import com.mysql.jdbc.Driver;
 
 public class SignUpServlet extends HttpServlet {
 
 	private String email = "", password = "", cpassword = "", title = "", fname = "",
 			lname = "", qualification = "", organisation = "",
-			specialisation = "";
+			specialisation = "",message="";
 
 	//Article credentials
 	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
@@ -46,6 +43,7 @@ public class SignUpServlet extends HttpServlet {
 		email = req.getParameter("email");
 		password = req.getParameter("password");
 		cpassword = req.getParameter("cpassword");
+		title = req.getParameter("title");
 		lname = req.getParameter("lname");
 		fname = req.getParameter("fname");
 		organisation = req.getParameter("organisation");
@@ -53,30 +51,34 @@ public class SignUpServlet extends HttpServlet {
 		//Prepare HTML page for output
 		res.setContentType("text/html");
 		PrintWriter out = res.getWriter();
-		out.println("<%@ include file=\"stucat008/includes/authorheader.jsp\"");
-
+		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
+		out.println(message);message="";
 		//Start session management here
 		HttpSession session = req.getSession(true);
 		
 
 		if (email.trim().compareTo("") == 0) {
-			out.println("Email address cannot be empty.");
-			out.println("</body></html>");
+			message="Email address cannot be empty.</body></html>";
+			out.println(message);
 			return;
 		}
 		
 		if (password.compareTo(cpassword) != 0) {
-			out.println("Password and Confirmed password should be the same.");
-			out.println("</body></html>");
+			message="Password and Confirmed password should be the same.</body></html>";
+			out.println(message);
 			return;
 		}
 		if (password.trim().compareTo("") == 0) {
-			out.println("Password cannot be empty.");
-			out.println("</body></html>");
+			message="Password cannot be empty.</body></html>";
+			out.println(message);
 			return;
 		}
 		
-		
+		if (fname.trim().compareTo("") == 0) {
+			message="First name cannot be empty.</body></html>";
+			out.println(message);
+			return;
+		}
 		
 		
 		
@@ -100,33 +102,38 @@ public class SignUpServlet extends HttpServlet {
 			int count = pstmt.executeUpdate();
 
 			if(count > 0){
-				out.println("Author Registration was successful<br/>");
+				message="Hello " + fname
+				+ ", You have succesfully registered as an author<br/>";
 				session.setAttribute("username",email);
 				session.setAttribute("password",password);
 				session.setAttribute("role","author");
+				out.println(message);
 
 			}
 			//Handles article submission, However, we need a fileupload wrapper for this to work on this tomcat server
 			authorid=count;
+			filepath = articleTitle + authorid;
+			//Retrieve file here, do upload and set corrected file name
+			
 			pstmtArticle = dbCon.prepareStatement(
-  				"INSERT INTO article(authorID,title,Other_authors,abstract,keywords) VALUES (null, ?, ?,?,?,?)");
+  				"INSERT INTO article(id,authorID,title,Other_authors,abstract,keywords,article_file) VALUES (null, ?, ?,?,?,?,?)");
 			pstmtArticle.setInt(1,authorid);
 			pstmtArticle.setString(2,articleTitle);
 			pstmtArticle.setString(3,coauthors);
 			pstmtArticle.setString(4,articleAbstract);
 			pstmtArticle.setString(5,keywords);
+			pstmtArticle.setString(6,filepath);
 			count = 0;
 			count=pstmtArticle.executeUpdate();
 			if(count > 0){
-				out.println("Article submission was successful");
+				message+="<span class=\"success\">Article submission was successful</br></span>";
 				session.setAttribute("article",articleTitle);
 			}
 
 		} catch (SQLException ex) {
 
 			ex.printStackTrace();
-			out.println("Article upload or Author Registration Error:" + ex.getMessage());
-
+			out.println("<span class=\"error\">Article upload or Author Registration Error: </span>" + ex.getMessage());
 			return;
 		}
 
@@ -137,10 +144,7 @@ public class SignUpServlet extends HttpServlet {
 				} catch (SQLException ex) {
 				}
 		}
-		
-
-		out.println("Hello " + fname
-				+ ", You have succesfully registered as an author");
-		out.println("</body></html>");
+		message+="</body></html>";
+		out.println(message);
 	}
 }
