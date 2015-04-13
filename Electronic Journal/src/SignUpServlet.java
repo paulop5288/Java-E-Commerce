@@ -3,6 +3,12 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 import com.mysql.jdbc.Driver;
+import org.apache.commons.fileupload.*;
+import org.apache.commons.io.output.*;
+import org.apache.commons.fileupload.disk.*;
+import org.apache.commons.fileupload.servlet.*;
+import java.util.*;
+
 
 public class SignUpServlet extends HttpServlet {
 
@@ -11,7 +17,9 @@ public class SignUpServlet extends HttpServlet {
 			specialisation = "",message="";
 
 	//Article credentials
-	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="";
+	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="uploads/";
+	private File file;
+	private int maxFileSize = 10240000;
 	private int authorid=0;
 	private int role = 1, count = 0;
 	private Connection dbCon = null; // connection to a database
@@ -22,7 +30,67 @@ public class SignUpServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		// Database Parameters
+		
+		//Prepare HTML page for output
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter();
+		ServletContext context = req.getServletContext();
+		filepath = context.getInitParameter("filepath");
+		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
+		out.println(message);message="";
+		
+		// verify content type
+		String requestContentType = req.getContentType();
+		if((requestContentType.indexOf("multipart/form-data")>=0)){
+			DiskFileItemFactory dFactory = new DiskFileItemFactory();
+			dFactory.setSizeThreshold(maxFileSize);
+			
+			//Now create a new file upload handler
+			ServletFileUpload fUpload = new ServletFileUpload(dFactory);
+			fUpload.setSizeMax(maxFileSize);
+			String fieldName="",fieldValue;
+			try{
+				//Get the file items from the request
+				List fileItems = fUpload.parseRequest(req);
+				//Now process the uploaded file items
+				Iterator i = fileItems.iterator();
+				while(i.hasNext()){
+					FileItem fItem = (FileItem)i.next();
+					if(!fItem.isFormField()){
+						//Get the uploaded file parameters and process them
+					message += "<p>Trying to upload submited Article...</p>";
+					String fileName = fItem.getName();
+					boolean isInMemory = fItem.isInMemory();
+					long byteSize = fItem.getSize();
+					//Write the article to the articles folder
+					if(fileName.lastIndexOf("\\")>=0){
+						file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\" )));
+					}
+					else{
+						file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+					}
+					
+					fItem.write(file);
+						
+					}
+					else{
+						// Process the other form fields submitted
+						fieldName=fItem.getFieldName();
+						fieldValue = fItem.getString();
+						message += fieldName + ": " + fieldValue + "<br/>";
+					}
+				}
+				
+			}
+			catch(Exception ex){
+				message= ex.getMessage();
+				out.println("<span class=\"error\">Fileupload error: </span>" + message);
+				return;
+			}
+		}
+		
+		
+		// Database Parameters and connection
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -48,11 +116,7 @@ public class SignUpServlet extends HttpServlet {
 		fname = req.getParameter("fname");
 		organisation = req.getParameter("organisation");
 
-		//Prepare HTML page for output
-		res.setContentType("text/html");
-		PrintWriter out = res.getWriter();
-		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
-		out.println(message);message="";
+		
 		//Start session management here
 		HttpSession session = req.getSession(true);
 		
