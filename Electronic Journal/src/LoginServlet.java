@@ -36,6 +36,7 @@ public class LoginServlet extends HttpServlet {
 		boolean userIsMatched = false;
 		String lastName = null;
 		String organisation = null;
+		String title = null;
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158",
@@ -45,6 +46,7 @@ public class LoginServlet extends HttpServlet {
 			if (resultSet.next()) {
 				lastName = resultSet.getString("lastName");
 				organisation = resultSet.getString("organisation");
+				title = resultSet.getString("title");
 				userIsMatched = true;
 			} else {
 				userIsMatched = false;
@@ -72,7 +74,7 @@ public class LoginServlet extends HttpServlet {
 			res.setContentType("text/html");
 			PrintWriter out = res.getWriter();
 			out.println("<html><body>");
-			out.println("Hello " + lastName + ", welcome back to "
+			out.println("Hello " + title + "." + lastName + ", welcome back to "
 					+ organisation);
 			out.println("</body></html>");
 			System.out.println("sucessful.");
