@@ -19,7 +19,7 @@ import org.omg.CORBA.PRIVATE_MEMBER;
 public class UploadServlet extends HttpServlet {
 	boolean isMultipart;
 	String filePath;
-	int maxFileSize = 50 * 1024;	// 50 kb
+	int maxFileSize = 50 * 1024 *1024;	// 50 mb
 	int maxMemSize = 4 * 1024;
 	File file = null;
 	
