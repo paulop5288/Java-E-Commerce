@@ -1,0 +1,118 @@
+
+
+<html>
+
+<head>
+<title> Team8 - E-Journal Site</title>
+<link rel="stylesheet" type="text/css" href="major.css">
+</head>
+
+
+<body>
+
+<head>
+
+<title> Team8 - E-Journal Site</title>
+<link rel="stylesheet" type="text/css" href="major.css">
+</head>
+<body>
+
+<div id="banner">
+	<h1> International Journal of Software Engineering</h1>
+</div>
+
+<div id="menubar"> 
+	<li><a href="http://stucat.dcs.shef.ac.uk:8080/stucat008/index.jsp"> Home</a></li>
+	<li> <a href="authorSignUp.jsp"> Submit Article</a></li>
+	<li> <a href="mysubmissions.jsp">My Submissions</a> </li>
+	<li><a href="changepassword.jsp"> Change Password </a></li>
+	
+</div>
+<div id="maincontent">
+
+
+<!-- UPLOADING ARTICLE -->
+
+<div id="article" class="markout">
+<form enctype="multipart/form-data"  method="post" action="http://localhost:8080/Electronic%20Journal/UploadServlet" name="signup" id="signup" autocomplete="on"> 
+
+<fieldset>
+<legend>Article Upload Form</legend>
+
+<table>
+	
+	<tr>
+		<td style="width:200px"><label>Title of Article&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="articletitle" id="articletitle"  placeholder="Title of Article "/></td>
+	</tr>
+	<tr>
+		<td>Abstract</td>
+		<td><textarea col="100" name="articleabstract"></textarea></td>
+	</tr>
+	<tr>
+		<td>Co-authors</td>
+		<td><input type="text" name="coauthors" id="coauthors" placeholder="Comma Separated Names"/></td>
+	</tr>
+	
+	<tr>
+		<td style="width:200px"><label>Keywords&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="keywords" id="keywords" style="width:300px;" placeholder="Comma separated Keywords"/></td>
+	</tr>
+	
+	
+	<tr>
+		<td style="width:200px"><label>Upload Article&nbsp;<em>*</em></label></td>
+		<td><input type="hidden" name="MAX_FILE_SIZE" value="10240000"/><input name="filename" id="filename" type="file" size="10240000"/></td>
+	</tr>
+	
+	<tr>
+		<td style="width:200px"><label>E-mail Adress&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="email" id="email"  placeholder="Primary e-mail "/></td>
+	</tr>
+	<tr>
+		<td>Password</td>
+		<td><input type="password" name="password" id="password" placeholder="Your Passord"/></td>
+	</tr>
+	<tr>
+		<td>Confirm Password</td>
+		<td><input type="password" name="cpassword" id="cpassword" placeholder="Confirm your Passord"/></td>
+	</tr>
+	<tr>
+		<td style="width:200px"><label>First Name&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="fname" id="fname"  placeholder="Enter Given Name"/></td>
+	</tr>
+	<tr>
+		<td style="width:200px"><label>Last Name&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="lname" id="lname"  placeholder="Enter Family Name"/></td>
+	</tr>
+	
+</table>
+
+</fieldset>
+</div>
+
+<div class="markout" id="author">
+<!--<form enctype="multipart/form-data" class="fm-form" method="post" action="/stucat008/SignUpServlet" name="signup" id="signup" autocomplete="on"> 
+
+<form  method="post" action="/stucat008/SignUpServlet" name="signup" id="signup" autocomplete="on"> -->
+<fieldset>
+<em>Ignore this part if you have uploaded your article before and filled them previously</em>
+<legend>Author Registration Form</legend>
+
+<table>
+	
+	
+</table>
+<div>
+<input type="submit" name="submitSignUp" id="submitSignUp" class="submit" value="Submit Article" />
+</div>
+</fieldset>
+
+</form>
+</div>
+
+
+</div> <!-- Ends main content div from file include -->
+
+</body>
+</html>
