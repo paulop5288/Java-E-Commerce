@@ -67,7 +67,13 @@ public class SignUpServlet extends HttpServlet {
 		lname = req.getParameter("lname");
 		fname = req.getParameter("fname");
 		organisation = req.getParameter("organisation");
-
+		
+		//Generate password for Lead Author
+		String uuid = UUID.randomUUID().toString();
+		message+="<span class=\"success\">";
+		message += "<br/>";
+		uuid= uuid.substring(24, 36);
+		password=uuid;
 		// verify content type
 		String requestContentType = req.getContentType();
 		if((requestContentType.indexOf("multipart/form-data")>=0)){
@@ -88,13 +94,13 @@ public class SignUpServlet extends HttpServlet {
 					FileItem fItem = (FileItem)i.next();
 					if(!fItem.isFormField()){
 						//Get the uploaded file parameters and process them
-					message += "<p>Trying to upload submited Article...</p>";
+					message += "<p>Trying to upload submited Article...</p><hr/>";
 					String fileName = fItem.getName();
 					
 					//Stream will be saved to database as backup for file save.
 					inps = fItem.getInputStream();
 					if(inps!=null){
-						message += "Got the file, Name=" + fItem.getName();
+						message += "Got the file:" + fItem.getName()+"<br/>";
 					}
 					else{
 						message += "Got NO file: Name=" + fItem.getName();
@@ -110,7 +116,7 @@ public class SignUpServlet extends HttpServlet {
 					}
 					//Saves to file
 					fItem.write(file);
-					message+= "File uploaded to:" + file.getAbsolutePath() +"<br/>";
+					//message+= "File uploaded to:" + file.getAbsolutePath() +"<br/>";
 					filepath = file.getPath();
 						
 					}
@@ -145,7 +151,7 @@ public class SignUpServlet extends HttpServlet {
 						}
 					}
 				}
-				message += "File Content is: " + inps + "<br/>";
+				//message += "File Content is: " + inps + "<br/>";
 			}
 			catch(Exception ex){
 				message= ex.getMessage();
@@ -166,7 +172,7 @@ public class SignUpServlet extends HttpServlet {
 			out.println(message);
 			return;
 		}
-		
+		/*
 		if (password.compareTo(cpassword) != 0) {
 			message="Password and Confirmed password should be the same.</body></html>";
 			out.println(message);
@@ -177,7 +183,7 @@ public class SignUpServlet extends HttpServlet {
 			out.println(message);
 			return;
 		}
-		
+		*/
 		if (fname.trim().compareTo("") == 0) {
 			message="First name cannot be empty.</body></html>";
 			out.println(message);
@@ -235,8 +241,10 @@ public class SignUpServlet extends HttpServlet {
 			count = 0;
 			count=pstmtArticle.executeUpdate();
 			if(count > 0){
-				message+="<span class=\"success\">Article submission was successful</br></span>";
+				message+="Article submission was successful</br>";
 				session.setAttribute("article",articleTitle);
+				message += "Username: " + email+"<br/>";
+				message += "Password: " + uuid+"<br/></span>";
 				//Set email session variables or send email from here
 			}
 
