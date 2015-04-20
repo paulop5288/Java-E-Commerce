@@ -37,6 +37,9 @@ public class LoginServlet extends HttpServlet {
 		String lastName = null;
 		String organisation = null;
 		String title = null;
+		//Start session management here
+		HttpSession session = req.getSession(true);
+		session.setAttribute("role", "author");
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158",
@@ -48,6 +51,7 @@ public class LoginServlet extends HttpServlet {
 				organisation = resultSet.getString("organisation");
 				title = resultSet.getString("title");
 				userIsMatched = true;
+				session.setAttribute("username", username);
 			} else {
 				userIsMatched = false;
 			}
@@ -74,7 +78,7 @@ public class LoginServlet extends HttpServlet {
 			res.setContentType("text/html");
 			PrintWriter out = res.getWriter();
 			out.println("<html><body>");
-			out.println("Hello " + title + "." + lastName + ", welcome back to "
+			out.println("Hello " + title + "." + lastName + ", welcome back to International Journal of Software Engineering"
 					+ organisation);
 			out.println("</body></html>");
 			System.out.println("sucessful.");

@@ -151,7 +151,7 @@ public class SignUpServlet extends HttpServlet {
 						}
 					}
 				}
-				//message += "File Content is: " + inps + "<br/>";
+				
 			}
 			catch(Exception ex){
 				message= ex.getMessage();
@@ -191,7 +191,7 @@ public class SignUpServlet extends HttpServlet {
 		}
 		
 		
-		
+		authorid = this.getAuthorId();
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmtArticle = null;
 
@@ -199,22 +199,25 @@ public class SignUpServlet extends HttpServlet {
 			// Get connection to team database
 			dbCon = DriverManager.getConnection(dbServer + dbname, user,
 					myPassword);
+			int count=0;
 			
-			/*
-			pstmt = dbCon
+			//Register new author only if not previously registered.
+			if(authorid>0){
+				pstmt = dbCon
 					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?)");
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
-			pstmt.setString(3, title);
-			pstmt.setString(4, fname);
-			pstmt.setString(5, lname);
-			pstmt.setString(6, qualification);
-			pstmt.setString(7, organisation);
-			pstmt.setString(8, specialisation);
-			int count = pstmt.executeUpdate();
-			*/
+				pstmt.setString(1, email);
+				pstmt.setString(2, password);
+				pstmt.setString(3, title);
+				pstmt.setString(4, fname);
+				pstmt.setString(5, lname);
+				pstmt.setString(6, qualification);
+				pstmt.setString(7, organisation);
+				pstmt.setString(8, specialisation);
+				count = pstmt.executeUpdate();
+			}
 
 			if(count > 0){
+				authorid = this.getAuthorId();
 				message="Hello " + fname
 				+ ", You have succesfully registered as an author<br/>";
 				session.setAttribute("username",email);
@@ -223,8 +226,7 @@ public class SignUpServlet extends HttpServlet {
 				out.println(message);
 
 			}
-			//Handles article submission, However, we need a fileupload wrapper for this to work on this tomcat server
-			authorid=count;
+			//Handling article upload
 			
 			//Retrieve file here, do upload and set corrected file name
 			
@@ -311,6 +313,43 @@ public class SignUpServlet extends HttpServlet {
 		
 		
 		return articles;
+		
+	}
+	
+	public int getAuthorId(){
+		int authorid=0;
+		if(email==null || email.equals(""))
+			return authorid;
+		try{
+			// Get connection to team database
+			dbCon = DriverManager.getConnection(dbServer + dbname, user,
+								myPassword);
+			Statement st = dbCon.createStatement();
+			ResultSet result = st.executeQuery("Select * FROM author username='"+ email + "'");
+			while(result.next()){
+				
+				authorid=result.getInt("authorID");
+				
+			}
+			
+		}
+		catch (Exception ex) {
+
+			ex.printStackTrace();
+			authorid=-1;
+			return authorid;
+		}
+
+		finally {
+			if (dbCon != null)
+				try {
+					dbCon.close();
+				} catch (SQLException ex) {
+				}
+		}
+		
+		
+		return authorid;
 		
 	}
 }
