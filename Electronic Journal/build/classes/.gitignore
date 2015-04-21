@@ -1,1 +1,11 @@
+/DBConnection.class
 /DownloadServlet.class
+/HelloWorld.class
+/LoginServlet.class
+/NotificationSignUpServlet.class
+/PasswordServlet.class
+/ReviewerLogin.class
+/ReviewerLogout$LogoutServlet.class
+/ReviewerLogout.class
+/SignUpServlet.class
+/UploadServlet.class
