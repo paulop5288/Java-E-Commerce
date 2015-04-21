@@ -42,4 +42,12 @@
   	<param-name>file-upload</param-name>
   	<param-value>C:\Users\Paul\Desktop\eclipse\apache-tomcat-7.0.59\webapps\data\</param-value>
   </context-param>
+  <servlet>
+  	<servlet-name>DownloadServlet</servlet-name>
+  	<servlet-class>DownloadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>DownloadServlet</servlet-name>
+  	<url-pattern>/DownloadServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
