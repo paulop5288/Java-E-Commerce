@@ -10,11 +10,10 @@ import org.apache.commons.fileupload.servlet.*;
 import java.util.*;
 
 
-public class SignUpServlet extends HttpServlet {
+public class ArticleRevisionServlet extends HttpServlet {
 
-	private String email = "", password = "", cpassword = "", title = "", fname = "",
-			lname = "", qualification = "", organisation = "",
-			specialisation = "",message="";
+	private String email = "", revision = "", title = "", fname = "",
+			lname = "",message="";
 	private String curDir ="";
 	PrintWriter out;
 	//Article credentials
@@ -22,15 +21,15 @@ public class SignUpServlet extends HttpServlet {
 	private File file;
 	InputStream inps = null;
 	private int maxFileSize = 10240000;
-	private int authorid=0;
-	private int role = 1, count = 0;
+	private int authorid=0,articleid=0;
+	private int version = 1, count = 0;
 	private Connection dbCon = null; // connection to a database
 	private String dbServer = "jdbc:mysql://stusql.dcs.shef.ac.uk/";
 	private String dbname = "team158";
 	private String user = "team158";
 	private String myPassword = "9a5b309d";
 
-	public SignUpServlet() {
+	public ArticleRevisionServlet() {
 		super();
 		// Load database driver
 		try {
@@ -53,27 +52,9 @@ public class SignUpServlet extends HttpServlet {
 		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
 		out.println(message);message="";
 		
-		//Article submission parameters
-		articleTitle=req.getParameter("articletitle");
-		articleAbstract = req.getParameter("articleabstract");
-		coauthors = req.getParameter("coauthors");
-		keywords = req.getParameter("keywords");
-				
-		//Author Registration Parameters for servlet 3.0
-		email = req.getParameter("email");
-		password = req.getParameter("password");
-		cpassword = req.getParameter("cpassword");
-		title = req.getParameter("title");
-		lname = req.getParameter("lname");
-		fname = req.getParameter("fname");
-		organisation = req.getParameter("organisation");
-		
-		//Generate password for Lead Author
-		String uuid = UUID.randomUUID().toString();
 		message+="<span class=\"success\">";
 		message += "<br/>";
-		uuid= uuid.substring(24, 36);
-		password=uuid;
+		
 		// verify content type
 		String requestContentType = req.getContentType();
 		if((requestContentType.indexOf("multipart/form-data")>=0)){
@@ -126,26 +107,15 @@ public class SignUpServlet extends HttpServlet {
 						fieldValue = fItem.getString();
 						//message += fieldName + ": " + fieldValue + "<br/>";
 						switch(fieldName){
-						case "articletitle":
-							articleTitle=fieldValue; break;
-						case "articleabstract":
-							articleAbstract = fieldValue; break;
-						case "coauthors":
-							coauthors=fieldValue; break;
-						case "keywords":
-							keywords = fieldValue; break;
+						
 						case "email":
 							email=fieldValue; break;
-						case "password":
-							password = fieldValue; break;
-						case "cpassword":
-							cpassword=fieldValue; break;
-						case "fname":
-							fname = fieldValue; break;
+						case "revision":
+							revision = fieldValue; break;
+						case "version":
+							version=Integer.parseInt(fieldValue); break;
 						case "title":
 							title=fieldValue; break;
-						case "lname":
-							lname = fieldValue; break;
 						default:
 							//message+= "<p>Unknown field added</p>";
 						}
@@ -161,8 +131,7 @@ public class SignUpServlet extends HttpServlet {
 		}
 		
 		
-				
-		
+
 		//Start session management here
 		HttpSession session = req.getSession(true);
 		
@@ -172,20 +141,9 @@ public class SignUpServlet extends HttpServlet {
 			out.println(message);
 			return;
 		}
-		/*
-		if (password.compareTo(cpassword) != 0) {
-			message="Password and Confirmed password should be the same.</body></html>";
-			out.println(message);
-			return;
-		}
-		if (password.trim().compareTo("") == 0) {
-			message="Password cannot be empty.</body></html>";
-			out.println(message);
-			return;
-		}
-		*/
-		if (fname.trim().compareTo("") == 0) {
-			message="First name cannot be empty.</body></html>";
+		
+		if (revision.trim().compareTo("") == 0) {
+			message="Please describe how you have addressed the errors from reviewers.</body></html>";
 			out.println(message);
 			return;
 		}
@@ -202,53 +160,29 @@ public class SignUpServlet extends HttpServlet {
 			int count=0;
 			
 			//Register new author only if not previously registered.
-			if(authorid < 0){
+			if(authorid>0){
 				pstmt = dbCon
-					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?)");
-				pstmt.setString(1, email);
-				pstmt.setString(2, password);
-				pstmt.setString(3, title);
-				pstmt.setString(4, fname);
-				pstmt.setString(5, lname);
-				pstmt.setString(6, qualification);
-				pstmt.setString(7, organisation);
-				pstmt.setString(8, specialisation);
+					.prepareStatement("INSERT INTO articlerevision(id,authorid,articleid,revision,revision_no,filepath) VALUES (null, ?, ?,?,?,?)");
+				pstmt.setInt(1, authorid);
+				pstmt.setInt(2, articleid);
+				pstmt.setString(3, revision);
+				pstmt.setInt(4, version);
+				pstmt.setString(5, filepath);
+				
 				count = pstmt.executeUpdate();
 			}
 
-			if(count == 0){
+			if(count > 0){
 				authorid = this.getAuthorId();
 				message="Hello " + fname
-				+ ", You have succesfully registered as an author<br/>";
-				session.setAttribute("username",email);
-				session.setAttribute("password",password);
-				session.setAttribute("role","author");
+				+ ", You have succesfully submitted your article revision<br/>";
+				
 				out.println(message);
 
 			}
 			//Handling article upload
 			
-			//Retrieve file here, do upload and set corrected file name
 			
-			pstmtArticle = dbCon.prepareStatement(
-  				"INSERT INTO article(articleID,authorID,title,Other_authors,abstract,keywords,article_file,authoremail) VALUES (null, ?, ?,?,?,?,?,?)");
-			pstmtArticle.setInt(1,authorid);
-			pstmtArticle.setString(2,articleTitle);
-			pstmtArticle.setString(3,coauthors);
-			pstmtArticle.setString(4,articleAbstract);
-			pstmtArticle.setString(5,keywords);
-			pstmtArticle.setString(6,filepath);
-			pstmtArticle.setString(7, email);
-			//pstmtArticle.setBlob(7,inps);
-			count = 0;
-			count=pstmtArticle.executeUpdate();
-			if(count > 0){
-				message+="Article submission was successful</br>";
-				session.setAttribute("article",articleTitle);
-				message += "Username: " + email+"<br/>";
-				message += "Password: " + uuid+"<br/></span>";
-				//Set email session variables or send email from here
-			}
 
 		} catch (Exception ex) {
 
@@ -269,53 +203,7 @@ public class SignUpServlet extends HttpServlet {
 		out.println(message);
 	}
 	
-	
-	
-	//Returns articles in the database that requires review
-	public List<String> getArticles(){
-		String articleslist="<table>";
-		List<String> articles = new ArrayList<String>();
-		try{
-			// Get connection to team database
-			dbCon = DriverManager.getConnection(dbServer + dbname, user,
-								myPassword);
-			Statement st = dbCon.createStatement();
-			ResultSet result = st.executeQuery("Select * FROM article");
-			while(result.next()){
-				articleslist+= "<tr>";
-				articles.add(result.getString("title"));
-				articleslist+= "<td>"+result.getString("title")+"</td>";
-				articles.add(result.getString("Other_authors"));
-				articles.add(result.getString("abstract"));
-				articleslist+= "<td>"+result.getString("abstract")+"</td>";
-				articles.add(result.getString("keywords"));
-				articleslist+= "<td>"+result.getString("keywords")+"</td>";
-				articles.add(result.getString("article_file"));
-				 articleslist+="<td><a href=\""+result.getString("article_file")
-		          + "\">" + "</a></td></tr>";
-			}
-			
-		}
-		catch (Exception ex) {
 
-			ex.printStackTrace();
-			//out.println("<span class=\"error\">Article upload or Author Registration Error: </span>" + ex.getMessage());
-			return articles;
-		}
-
-		finally {
-			if (dbCon != null)
-				try {
-					dbCon.close();
-				} catch (SQLException ex) {
-				}
-		}
-		
-		
-		return articles;
-		
-	}
-	
 	public int getAuthorId(){
 		int authorid=0;
 		if(email==null || email.equals(""))
@@ -325,7 +213,7 @@ public class SignUpServlet extends HttpServlet {
 			dbCon = DriverManager.getConnection(dbServer + dbname, user,
 								myPassword);
 			Statement st = dbCon.createStatement();
-			ResultSet result = st.executeQuery("Select * FROM author WHERE username='"+ email + "'");
+			ResultSet result = st.executeQuery("Select * FROM author username='"+ email + "'");
 			while(result.next()){
 				
 				authorid=result.getInt("authorID");
@@ -336,13 +224,16 @@ public class SignUpServlet extends HttpServlet {
 		catch (Exception ex) {
 
 			ex.printStackTrace();
-			out.print("Error while getting user id:" + ex.getMessage());
 			authorid=-1;
 			return authorid;
 		}
 
 		finally {
-			
+			if (dbCon != null)
+				try {
+					dbCon.close();
+				} catch (SQLException ex) {
+				}
 		}
 		
 		
