@@ -29,7 +29,7 @@
     Please choose your expertise level
     <br><br>
     <form method="post" 
-    action="http://localhost:8080/FirstWeb/LoginServlet">
+    action="http://localhost:8080/Electronic%20Journal/SubmitReview">
     <input type="radio" name="level" value="expert">Expert
     <input type="radio" name="level" value="knowledgeable">Knoweledgeable
     <input type="radio" name="level" value="outsider">Outsider
