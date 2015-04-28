@@ -30,16 +30,40 @@
     <url-pattern>/SignUpServlet</url-pattern>
   </servlet-mapping>
   <servlet>
-  	<servlet-name>UploadServlet</servlet-name>
-  	<servlet-class>UploadServlet</servlet-class>
+    <servlet-name>UploadServlet</servlet-name>
+    <servlet-class>UploadServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>UploadServlet</servlet-name>
-  	<url-pattern>/UploadServlet</url-pattern>
+    <servlet-name>UploadServlet</servlet-name>
+    <url-pattern>/UploadServlet</url-pattern>
   </servlet-mapping>
   <context-param>
-  	<description>Location to store uploaded files</description>
-  	<param-name>file-upload</param-name>
-  	<param-value>C:\Users\Paul\Desktop\eclipse\apache-tomcat-7.0.59\webapps\data\</param-value>
+    <description>Location to store uploaded files</description>
+    <param-name>file-upload</param-name>
+    <param-value>C:\Users\Paul\Desktop\eclipse\apache-tomcat-7.0.59\webapps\data\</param-value>
   </context-param>
+  <servlet>
+    <servlet-name>DownloadServlet</servlet-name>
+    <servlet-class>DownloadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DownloadServlet</servlet-name>
+    <url-pattern>/DownloadServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ReviewerLogin</servlet-name>
+    <servlet-class>ReviewerLogin</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReviewerLogin</servlet-name>
+    <url-pattern>/ReviewerLogin</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ReviewerLogout</servlet-name>
+    <servlet-class>ReviewerLogout</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReviewerLogout</servlet-name>
+    <url-pattern>/ReviewerLogout</url-pattern>
+  </servlet-mapping>
 </web-app>
