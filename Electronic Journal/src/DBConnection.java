@@ -1,5 +1,5 @@
 import java.sql.*;
-//
+
 public class DBConnection {
 	private Connection con = null;
 	private Statement stmt = null;
