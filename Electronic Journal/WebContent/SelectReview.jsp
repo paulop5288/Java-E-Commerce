@@ -38,8 +38,8 @@
 		<div id="select">
 			<br> <br> Please select the article you want to review
 			<form
-				action="http://localhost:8080/Electronic%20Journal/SelectReview"
-				method=post>
+				action="http://stucat.dcs.shef.ac.uk:8080/stucat008/DownloadServlet"
+				method=get>
 				<table border="1" style="width: 100%">
 					<%
 						for (Article article : articles) {
