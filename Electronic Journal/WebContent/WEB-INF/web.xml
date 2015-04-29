@@ -74,4 +74,12 @@
   	<servlet-name>SubmitReview</servlet-name>
   	<url-pattern>/SubmitReview</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<servlet-name>SelectReview</servlet-name>
+  	<servlet-class>SelectReview</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>SelectReview</servlet-name>
+  	<url-pattern>/SelectReview</url-pattern>
+  </servlet-mapping>
 </web-app>

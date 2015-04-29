@@ -11,9 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class SubmitReview extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1575704856800198225L;
 	private String reviewerLevel = "", articleAbstract = "", contribution = "", badPoints = "", errors = "";
 	private int  authorID, articleID;
-	private String table = "review";
 	public SubmitReview() {
 		super();
 		try {
@@ -53,12 +56,10 @@ public class SubmitReview extends HttpServlet {
 			
 			int updateResult = dbConnection.executeUpdate(pstm);
 			System.out.println(updateResult);
-			dbConnection.closeConnection();
+			dbConnection.closeConnection();			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		
 		out.println("<html><body>");
 		out.println(reviewerLevel);
