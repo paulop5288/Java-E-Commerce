@@ -76,10 +76,10 @@
   </servlet-mapping>
   <servlet>
   	<servlet-name>SelectReview</servlet-name>
-  	<servlet-class>SelectReview</servlet-class>
+  	<servlet-class>review.SelectReview</servlet-class>
   </servlet>
   <servlet-mapping>
   	<servlet-name>SelectReview</servlet-name>
-  	<url-pattern>/SelectReview</url-pattern>
+  	<url-pattern>/SelectReview.html</url-pattern>
   </servlet-mapping>
 </web-app>

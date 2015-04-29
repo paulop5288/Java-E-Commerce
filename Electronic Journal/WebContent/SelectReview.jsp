@@ -8,8 +8,8 @@
 <link rel="stylesheet" type="text/css" href="major.css">
 </head>
 <body>
-	<%@ page import="Review.*" %>
 	<%@ page import="java.util.List" %>
+	<%@ page import="review.*" %>
 	<%! private List<Article> articles = SelectReview.getArticlesForReview(); %>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
@@ -38,8 +38,8 @@
 		<div id="select">
 			<br> <br> Please select the article you want to review
 			<form
-				action="http://stucat.dcs.shef.ac.uk:8080/stucat008/DownloadServlet"
-				method=get>
+				action="http://localhost:8080/Electronic%20Journal/SelectReview.html"
+				method=post>
 				<table border="1" style="width: 100%">
 					<%
 						for (Article article : articles) {
