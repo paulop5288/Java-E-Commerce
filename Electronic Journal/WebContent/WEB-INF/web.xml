@@ -66,4 +66,12 @@
     <servlet-name>ReviewerLogout</servlet-name>
     <url-pattern>/ReviewerLogout</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<servlet-name>SubmitReview</servlet-name>
+  	<servlet-class>SubmitReview</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>SubmitReview</servlet-name>
+  	<url-pattern>/SubmitReview</url-pattern>
+  </servlet-mapping>
 </web-app>

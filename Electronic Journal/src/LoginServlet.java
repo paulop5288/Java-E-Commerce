@@ -37,17 +37,23 @@ public class LoginServlet extends HttpServlet {
 		String lastName = null;
 		String organisation = null;
 		String title = null;
+		PrintWriter out = res.getWriter();
+		//Start session management here
+		HttpSession session = req.getSession(true);
+
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158",
 					"9a5b309d");
 			stmt = con.createStatement();
+			out.print("connection successful");
 			resultSet = stmt.executeQuery(query);
 			if (resultSet.next()) {
 				lastName = resultSet.getString("lastName");
 				organisation = resultSet.getString("organisation");
 				title = resultSet.getString("title");
 				userIsMatched = true;
+				session.setAttribute("username",resultSet.getString("username"));
 			} else {
 				userIsMatched = false;
 			}
@@ -61,6 +67,7 @@ public class LoginServlet extends HttpServlet {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+				out.println(e.getMessage());
 			}
 			try {
 				if (con != null) {
@@ -68,21 +75,20 @@ public class LoginServlet extends HttpServlet {
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+				out.println(e.getMessage());
 			}
 		}
 		if (userIsMatched) {
 			res.setContentType("text/html");
-			PrintWriter out = res.getWriter();
+			
 			out.println("<html><body>");
-			out.println("Hello " + title + "." + lastName + ", welcome back to "
-					+ organisation);
+			out.println("Hello " + title + "." + lastName + ", welcome back to International Journal of Software Engineering");
 			out.println("</body></html>");
 			System.out.println("sucessful.");
 		} else {
 			res.setContentType("text/html");
-			PrintWriter out = res.getWriter();
 			out.println("<html><body>");
-			out.println("Invalid username or password.");
+			out.println("Login failed: Invalid username or password.");
 			out.println("</body></html>");
 			System.out.println("failed.");
 		}
