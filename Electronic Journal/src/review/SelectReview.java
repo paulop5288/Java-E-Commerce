@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import database.DBConnection;
+import database.DownloadServlet;
 import review.*;
 
 public class SelectReview extends HttpServlet {
@@ -30,11 +32,13 @@ public class SelectReview extends HttpServlet {
 		reviewerID = 1;
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
-		String query = "INSERT INTO review VALUES (null,?,?,null,null,null,null,null,null,null);";
+		String query = "INSERT INTO review (reviewID,reviewerID,articleID,status) VALUES "
+				+ "(null,?,?,?);";
 		try {
 			pstm = dbConnection.createPreparedStatement(query);
 			pstm.setInt(1, reviewerID);
 			pstm.setInt(2, articleID);
+			pstm.setBoolean(3, false);
 			int count = dbConnection.executeUpdate(pstm);
 			if (count == 0) {
 				System.out.println("failed to insert.");
@@ -43,14 +47,11 @@ public class SelectReview extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.println("<html><body>");
 		out.println("The article selected is article " + articleID);
 		out.println("</body></html>");
-		System.out.println("loaded.");
 	}
 	
 	@Override

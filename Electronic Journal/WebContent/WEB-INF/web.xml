@@ -44,11 +44,11 @@
   </context-param>
   <servlet>
     <servlet-name>DownloadServlet</servlet-name>
-    <servlet-class>DownloadServlet</servlet-class>
+    <servlet-class>database.DownloadServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>DownloadServlet</servlet-name>
-    <url-pattern>/DownloadServlet</url-pattern>
+    <url-pattern>/review/DownloadServlet</url-pattern>
   </servlet-mapping>
   <servlet>
     <servlet-name>ReviewerLogin</servlet-name>

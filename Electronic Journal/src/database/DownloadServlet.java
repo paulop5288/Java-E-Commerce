@@ -1,3 +1,4 @@
+package database;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,38 +21,15 @@ public class DownloadServlet extends HttpServlet {
 	private boolean fileExist = false;
 	private String username = "";
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		System.out.println("start download");
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.err.println("fail to load driver.");
-		}
 		
-		String query = "SELECT article_file FROM article where id = ?";
-		Connection dbCon = null;
-		PreparedStatement pstmt = null;
-		ResultSet resultSet = null;
 		String id = req.getParameter("articleID");
-		String fileName = "";
+		String fileName = "SleepApplication.pdf";
 		// \export\tomtemp\
-		String filePath = "\\export\\tomtemp\\";
+		String filePath = "C:\\Users\\Paul\\Desktop\\";
 		String fileType = "APPLICATION/PDF";
-		try {
-			// Get connection to team database
-			dbCon = DriverManager.getConnection(dbServer + dbName, dbUsername,
-					dbPassword);
-			pstmt = dbCon.prepareStatement(query);
-			pstmt.setString(1, "1");
-			resultSet = pstmt.executeQuery();
-			if (resultSet.next()) {
-				//fileName = resultSet.getString("article_file");
-				System.out.println(fileName);
-			}
-		} catch (Exception e) {
-			System.out.println("There is an exception.");
-		}
 		
 		
 		// Find this file id in database to get file name, and file type
@@ -62,7 +40,7 @@ public class DownloadServlet extends HttpServlet {
 
 		// Make sure to show the download dialog
 		resp.setHeader("Content-Disposition",
-				"inline; filename=\"" + fileName + "\"");
+				"attachment; filename=\"" + fileName + "\"");
 
 		// Assume file name is retrieved from database
 		// For example D:\\file\\test.pdf
@@ -82,7 +60,7 @@ public class DownloadServlet extends HttpServlet {
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		System.out.println("start download");
 		try {
