@@ -1,4 +1,4 @@
-package review;
+package rreview;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import database.DBConnection;
-import review.*;
+import rreview.*;
 
 public class SelectReview extends HttpServlet {
 	private String articleID = "";
