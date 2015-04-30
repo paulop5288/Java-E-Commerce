@@ -1,0 +1,145 @@
+
+#banner{
+
+}
+
+
+body{
+	background-color: white;
+	text-decoration: bold;
+}
+#menubar{
+	width:100%;
+	margin: 0;
+	padding: 7px 6px 0;
+	/* background: #7d7d7d url(../images/gradient.png) repeat-x 0 -110px;*/
+	background: #7887ab url(../images/gradient.png) repeat-x 0 -110px;
+	border-radius: 2em;
+	-webkit-border-radius: 2em;
+	-moz-border-radius: 2em;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0, .4);
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0, .4);
+	color: #666;
+	height:	30px;
+	
+}
+#menubar li{
+	padding: 0 0 12px;
+	float:	left;
+	position: relative;
+	list-style: none;
+	font-weight: bold;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+	font-size: 16px
+}
+#menubar a{
+	font-weight: bold;
+	color: #e7e5e5;
+	text-decoration: none;
+	display: block;
+	padding: 4px 4px;
+	margin: 0;
+	-webkit-border-radius: 1.6em;
+	-moz-border-radius: 1.6em;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.3);	
+}
+#menubar a:hover {
+	background: #000;
+	color: #fff;
+}
+
+
+
+
+#maincontent{
+	min-height: 700px;
+	background: #4ab9b9 url(../images/gradient.png) repeat-x 0 -110px;
+	margin-left: 50px;
+	margin-right: 50px;
+	
+}
+#leftdiv{
+	float: left;
+	width: 68%;
+}
+.right{
+	float: right;
+	background: #4ab9b9 url(../images/gradient.png) repeat-x 0 -110px;
+	color: white;
+}
+
+#rightdiv{
+	float: right;
+	
+}
+.markout{
+	background: #ccd url(../images/gradient.png) repeat-x 0 -110px	
+}
+#publications{
+	float: left;
+	margin-left: 0px;
+}
+#publications fieldset{
+	margin-left: 0px;
+}
+.success{
+	background: green;
+}
+.error{
+	color: red;
+	background: black;
+}
+select,input[type="text"],input[type="password"],input[type="search"]{
+  width:  100%;
+  padding:  5px 15px;
+  background: #4a5a6a;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+input[type="text"]:focus{
+  background-color: #fff;
+}
+input[type="submit"]{
+  color:  white;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  align:  right;
+  background:	blue;
+}
+@font-face
+  font-family: 'Gotham-Black'
+  src: font-url('Gotham-Black.eot?iefix') format('eot'), font-url('Gotham-Black.woff') format('woff'), font-url('Gotham-Black.ttf') format('truetype'), font-url('Gotham-Black.svg#webfont') format('svg')
+  font-weight: normal
+  font-style: normal
+h1
+  font-size:  20px
+  background-color: blue
+  color:  #fff
+  text-decoration:  bold
+  border-radius: 5px
+
+table
+  width:  100%
+  padding: 10px
+
+tbody tr:nth-child(odd) 
+  background: #eee
+a
+  color:  blue
+
+tr
+  border: 0px solid #ddd
+td
+  border: 5px
+
+
+
+@font-face
+  font-family: 'Bira'
+  src: font-url('Bira.eot')
+  src: font-url('Bira.eot?iefix') format('eot'), font-url('Bira.woff') format('woff'), font-url('Bira.ttf') format('truetype'), font-url('Bira.svg#webfont') format('svg')
+  font-weight: normal
+  font-style: normal

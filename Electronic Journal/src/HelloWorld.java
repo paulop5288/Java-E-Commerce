@@ -36,5 +36,11 @@ public class HelloWorld extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		PrintWriter out = resp.getWriter();
+        out.println("Hello World");
+	}
 
 }
