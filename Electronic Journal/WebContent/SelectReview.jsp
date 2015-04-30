@@ -23,9 +23,6 @@
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/review/reviewform.jsp">
 				Submit Review Form</a></li>
 		<li><a
-			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/mysubmissions.jsp">My
-				Submissions</a></li>
-		<li><a
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/changepassword.jsp">
 				Change Password </a></li>
 	</div>
