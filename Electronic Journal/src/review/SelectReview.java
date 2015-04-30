@@ -16,7 +16,7 @@ import database.DBConnection;
 import review.*;
 
 public class SelectReview extends HttpServlet {
-	private String articleID = "";
+	private int articleID = 0, reviewerID = 0;
 	public SelectReview() {
 		// TODO Auto-generated constructor stub
 	}
@@ -24,7 +24,27 @@ public class SelectReview extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		articleID = req.getParameter("article");
+//		articleID = Integer.parseInt(req.getParameter("article"));
+//		reviewerID = Integer.parseInt(req.getParameter("userID"));
+		articleID = 1;
+		reviewerID = 1;
+		DBConnection dbConnection = new DBConnection();
+		PreparedStatement pstm = null;
+		String query = "INSERT INTO review VALUES (null,?,?,null,null,null,null,null,null,null);";
+		try {
+			pstm = dbConnection.createPreparedStatement(query);
+			pstm.setInt(1, reviewerID);
+			pstm.setInt(2, articleID);
+			int count = dbConnection.executeUpdate(pstm);
+			if (count == 0) {
+				System.out.println("failed to insert.");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
 		out.println("<html><body>");

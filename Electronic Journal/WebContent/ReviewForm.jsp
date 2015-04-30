@@ -73,7 +73,8 @@
 		<h1>International Journal of Software Engineering</h1>
 	</div>
 	<%@ page import="java.util.Date"%>
-	<%@  %>
+	<%@ page import="review.*" %>
+	<%@ page import="database.*" %>
 	<p><%= new Date() %></p>
 
 	<div id="menubar">
