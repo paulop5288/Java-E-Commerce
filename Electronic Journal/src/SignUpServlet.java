@@ -292,45 +292,7 @@ public class SignUpServlet extends HttpServlet {
 				message += "Password: " + uuid+"<br/></span>";
 			}
 			// Send Email here
-			try {
-	        	
-		         Properties ps = new Properties();
-		            
-		         ps.setProperty("mail.host", "smtp.gmail.com");
-		         ps.setProperty("mail.smtp.port", "587");
-		         ps.setProperty("mail.smtp.auth", "true");
-		         ps.setProperty("mail.smtp.starttls.enable", "true");
-
-		         Session session1 = Session.getDefaultInstance(ps, new javax.mail.Authenticator() {
-		        	 
-		         protected PasswordAuthentication getPasswordAuthentication() {
-		         return new PasswordAuthentication(from,password);}
-		             
-		         });
-
-		         MimeMessage ms = new MimeMessage(session1);
-		         ms.setText(message);
-		         ms.setFrom(new InternetAddress(from));
-		         ms.setSubject(subject);
-		            
-		         ms.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-		         Transport transport = session1.getTransport("smtp");
-		         Transport.send(ms);
-		            
-		         transport.connect(host, from, emailpassword);
-		         transport.close();
-		           
-		         out.println("  The e-mail was sent successfully"); 
-		 
-			  
-				  
-			    }catch (MessagingException ex){
-		        
-		        ex.printStackTrace();
-		        out.println("There were an error: " + ex.getMessage());
-		        } 
-				
-			 
+			
 
 		}catch (Exception ex) {
 
