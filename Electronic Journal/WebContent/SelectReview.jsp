@@ -33,7 +33,16 @@
 		<!-- end right div -->
 		<id="leftdiv">
 		<div id="select">
-			<br> <br> Please select the article you want to review
+		<%
+			if (!SelectReview.checkNumberOfReview(3)) {
+				%>
+				<p>You have selected 3 articles for review.<br>
+				Please submit your review form.
+				</p>
+				<%
+			} else { 
+				%>
+				<br> <br> Please select the article you want to review
 			<form
 				action="http://localhost:8080/Electronic%20Journal/SelectReview.html"
 				method=post>
@@ -63,6 +72,11 @@
 				</table>
 				<input type="submit" value="Choose">
 			</form>
+				<%
+			}
+		
+		%>
+			
 		</div>
 		<p></p>
 		<h3>Guideline for Reviewers</h3>
