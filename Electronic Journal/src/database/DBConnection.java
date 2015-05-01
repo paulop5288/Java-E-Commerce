@@ -1,5 +1,9 @@
 package database;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import review.Article;
 
 public class DBConnection {
 	private Connection con = null;
@@ -121,6 +125,8 @@ public class DBConnection {
 		}
 		return initialized;
 	}
+	
+
 // example
 // use DBConnection to connect to database and execute queries
 	

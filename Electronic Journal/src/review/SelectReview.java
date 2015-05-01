@@ -1,4 +1,5 @@
 package review;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
@@ -19,6 +20,7 @@ import review.*;
 
 public class SelectReview extends HttpServlet {
 	private int articleID = 0, reviewerID = 0;
+
 	public SelectReview() {
 		// TODO Auto-generated constructor stub
 	}
@@ -26,14 +28,15 @@ public class SelectReview extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-//		articleID = Integer.parseInt(req.getParameter("article"));
-//		reviewerID = Integer.parseInt(req.getParameter("userID"));
-		articleID = 1;
-		reviewerID = 1;
+		articleID = Integer.parseInt(req.getParameter("article"));
+		reviewerID = 3;
+		// reviewerID = Integer.parseInt(req.getParameter("userID"));
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		String query = "INSERT INTO review (reviewID,reviewerID,articleID,status) VALUES "
 				+ "(null,?,?,?);";
+		String updateArticle = "UPDATE article set no_reviewer = no_reviewer + 1 where"
+				+ " article.articleID = ?;";
 		try {
 			pstm = dbConnection.createPreparedStatement(query);
 			pstm.setInt(1, reviewerID);
@@ -42,6 +45,13 @@ public class SelectReview extends HttpServlet {
 			int count = dbConnection.executeUpdate(pstm);
 			if (count == 0) {
 				System.out.println("failed to insert.");
+			} else {
+				pstm = dbConnection.createPreparedStatement(updateArticle);
+				pstm.setInt(1, articleID);
+				count = dbConnection.executeUpdate(pstm);
+				if (count == 0) {
+					System.out.println("failed to update");
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -54,40 +64,61 @@ public class SelectReview extends HttpServlet {
 		out.println("</body></html>");
 	}
 	
+	public static List<Article> getArticlesForReview(int reviewerID) {
+		DBConnection dbConnection = new DBConnection();
+		PreparedStatement pstm = null;
+		List<Article> articles = new ArrayList<Article>();
+		String checkReviewQuery = "SELECT COUNT(review.reviewID) from review where review.reviewerID = ?;";
+		String getArticleQuery = "select article.articleID, article.authorID, article.title, article.abstract from article "
+				+ "where article.articleID not in "
+				+ "(select review.articleID from review where review.reviewerID = ?) "
+				+ "and article.authorID != ? "
+				+ "and article.passed_review + article.no_reviewer <= ?;";
+		try {
+			pstm = dbConnection
+					.createPreparedStatement(checkReviewQuery);
+			pstm.setInt(1, reviewerID);
+			ResultSet resultSet = dbConnection.executeQuery(pstm);
+			int count = 0;
+			if (resultSet.next()) {
+				count = resultSet.getInt("COUNT(review.reviewID)");
+			}
+			if (count < 3) {
+				pstm = dbConnection
+						.createPreparedStatement(getArticleQuery);
+				pstm.setInt(1, reviewerID);
+				pstm.setInt(2, reviewerID);
+				pstm.setInt(3, 5);
+				resultSet = dbConnection.executeQuery(pstm);
+				for (int i = 0; i < 5; i++) {
+					if (resultSet.next()) {
+						int articleID = resultSet.getInt("articleID");
+						int authorID = resultSet.getInt("authorID");
+						String title = resultSet.getString("title");
+						String articleAbstract = resultSet.getString("abstract");
+						articles.add(new Article(articleID, authorID, title,
+								articleAbstract));
+					}
+				}
+			}
+
+			dbConnection.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(articles);
+		return articles;
+	}
+	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doGet(req, resp);
 	}
-	
-	public static List<Article> getArticlesForReview() {
-		DBConnection dbConnection = new DBConnection();
-		PreparedStatement pstm = null;
-		List<Article> articles = new ArrayList<Article>();
-		try {
-			pstm = dbConnection.createPreparedStatement("select * from article order by submissionDate ASC;");
-			ResultSet resultSet = dbConnection.executeQuery(pstm);
-			for (int i = 0; i < 5; i++) {
-				if (resultSet.next()) {
-					String articleID = resultSet.getString("articleID");
-					String authorID = resultSet.getString("authorID");
-					String title = resultSet.getString("title");
-					String articleAbstract = resultSet.getString("abstract");
-					articles.add(new Article(articleID, authorID, title, articleAbstract));
-				}
-			}			
-			dbConnection.closeConnection();			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println(articles);
-		return articles;
-	}
-	
-	public static void main(String[] args) {
-		SelectReview review = new SelectReview();
-		review.getArticlesForReview();
-	}
+
+
+
 }

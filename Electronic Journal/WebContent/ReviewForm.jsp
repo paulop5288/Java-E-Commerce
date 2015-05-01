@@ -33,10 +33,10 @@
 		<legend>Review Form</legend>
 
 		<select>
-			<option value="select">please select</option>
-			<option value="saab">Saab</option>
-			<option value="mercedes">Mercedes</option>
-			<option value="audi">Audi</option>
+			<option id="0" value="select">please select</option>
+			<option id="1" value="Genetic Algorithm for UTP">Saab</option>
+			<option id="2" value="Programming for Rasbery">Mercedes</option>
+			<option id="3" value="Sleep Application">Audi</option>
 			
 		</select> 
 		<br>

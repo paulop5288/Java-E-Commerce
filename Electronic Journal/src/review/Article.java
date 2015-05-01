@@ -2,12 +2,12 @@ package review;
 
 public class Article {
 	
-	private String articleID = "";
-	private String authorID = "";
+	private int articleID = 0;
+	private int authorID = 0;
 	private String title = "";
 	private String articleAbstract = "";
 
-	public Article(String articleID, String authorID, String title, String articleAbstract) {
+	public Article(int articleID, int authorID, String title, String articleAbstract) {
 		this.articleID = articleID;
 		this.title = title;
 		this.authorID = authorID;
@@ -19,13 +19,14 @@ public class Article {
 		return articleAbstract;
 	}
 	
-	public String getArticleID() {
-		return articleID;
+	public String getArticleIDString() {
+		return String.valueOf(articleID);
 	}
 	
-	public String getAuthorID() {
-		return authorID;
+	public String getAuthorIDString() {
+		return String.valueOf(authorID);
 	}
+	
 	
 	public String getTitle() {
 		return title;
