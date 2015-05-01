@@ -270,14 +270,13 @@ public class SignUpServlet extends HttpServlet {
 			//Retrieve file here, do upload and set corrected file name
 			
 			pstmtArticle = dbCon.prepareStatement(
-  				"INSERT INTO article(articleID,authorID,title,Other_authors,abstract,keywords,article_file,authoremail) VALUES (null, ?, ?,?,?,?,?,?)");
+  				"INSERT INTO article(articleID,authorID,title,Other_authors,abstract,keywords,article_file) VALUES (null, ?, ?,?,?,?,?)");
 			pstmtArticle.setInt(1,authorid);
 			pstmtArticle.setString(2,articleTitle);
 			pstmtArticle.setString(3,coauthors);
 			pstmtArticle.setString(4,articleAbstract);
 			pstmtArticle.setString(5,keywords);
 			pstmtArticle.setString(6,filepath);
-			pstmtArticle.setString(7, email);
 			//pstmtArticle.setBlob(7,inps);
 			int count1 = 0;
 			count1=pstmtArticle.executeUpdate();
