@@ -21,9 +21,6 @@ import review.*;
 public class SelectReview extends HttpServlet {
 	private int articleID = 0, reviewerID = 0;
 
-	public SelectReview() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
