@@ -51,6 +51,7 @@ public class SignUpServlet extends HttpServlet {
     private String emailpassword="Kingrock1";
     private String host = "smtp.gmail.com";
     String to = "";
+    boolean sentmail=false;
     private String subject = "Article Submission at IJSE";
 
 	public SignUpServlet() {
@@ -76,14 +77,12 @@ public class SignUpServlet extends HttpServlet {
 		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
 		out.println(message);message="";
 		
-		
-		//Article submission parameters
+				
+		//FOR: Servlet 3.0
 		articleTitle=req.getParameter("articletitle");
 		articleAbstract = req.getParameter("articleabstract");
 		coauthors = req.getParameter("coauthors");
 		keywords = req.getParameter("keywords");
-				
-		//Author Registration Parameters for servlet 3.0
 		email = req.getParameter("email");
 		password = req.getParameter("password");
 		cpassword = req.getParameter("cpassword");
@@ -104,7 +103,6 @@ public class SignUpServlet extends HttpServlet {
 			DiskFileItemFactory dFactory = new DiskFileItemFactory();
 			dFactory.setSizeThreshold(maxFileSize);
 			
-			
 			//Now create a new file upload handler
 			ServletFileUpload fUpload = new ServletFileUpload(dFactory);
 			fUpload.setSizeMax(maxFileSize);
@@ -112,43 +110,44 @@ public class SignUpServlet extends HttpServlet {
 			try{
 				//Get the file items from the request
 				List<FileItem> fileItems = fUpload.parseRequest(req);
+				
 				//Now process the uploaded file items
 				Iterator<FileItem> i = fileItems.iterator();
 				while(i.hasNext()){
 					FileItem fItem = (FileItem)i.next();
 					if(!fItem.isFormField()){
 						//Get the uploaded file parameters and process them
-					message += "<p>Trying to upload submited Article...</p><hr/>";
-					String fileName = fItem.getName();
-					
-					//Stream will be saved to database as backup for file save.
-					inps = fItem.getInputStream();
-					if(inps!=null){
-						message += "Got the file:" + fItem.getName()+"<br/>";
-					}
-					else{
-						message += "Got NO file: Name=" + fItem.getName();
-					}
-					boolean isInMemory = fItem.isInMemory();
-					long byteSize = fItem.getSize();
-					//Write the article to the articles folder
-					if(fileName.lastIndexOf("\\")>=0){
-						file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\" )));
-					}
-					else{
-						file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\") + 1));
-					}
-					//Saves to file
-					fItem.write(file);
-					//message+= "File uploaded to:" + file.getAbsolutePath() +"<br/>";
-					filepath = file.getPath();
+						message += "<p>Trying to upload submited Article...</p><hr/>";
+						String fileName = fItem.getName();
+						
+						//Stream will be saved to database as backup for file save.
+						inps = fItem.getInputStream();
+						if(inps!=null){
+							message += "Got the file:" + fItem.getName()+"<br/>";
+						}
+						else{
+							message += "Got NO file: Name=" + fItem.getName();
+						}
+						boolean isInMemory = fItem.isInMemory();
+						long byteSize = fItem.getSize();
+						
+						//Write the article to the articles folder
+						if(fileName.lastIndexOf("\\")>=0){
+							file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\" )));
+						}
+						else{
+							file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+						}
+						//Saves to file
+						fItem.write(file);
+						//message+= "File uploaded to:" + file.getAbsolutePath() +"<br/>";
+						filepath = file.getPath();
 						
 					}
 					else{
 						// Process the other form fields submitted
 						fieldName=fItem.getFieldName();
 						fieldValue = fItem.getString();
-						//message += fieldName + ": " + fieldValue + "<br/>";
 						switch(fieldName){
 						case "articletitle":
 							articleTitle=fieldValue; break;
@@ -170,6 +169,8 @@ public class SignUpServlet extends HttpServlet {
 							title=fieldValue; break;
 						case "lname":
 							lname = fieldValue; break;
+						case "organisation":
+							organisation = fieldValue; break;
 						default:
 							//message+= "<p>Unknown field added</p>";
 						}
@@ -284,12 +285,20 @@ public class SignUpServlet extends HttpServlet {
 				message+="Article submission was successful</br>";
 				session.setAttribute("article",articleTitle);
 				message += "Username: " + email+"<br/>";
-				
-				//Set email session variables or send email from here
+				to=email;
+				//Send email from here to author
+				sentmail = sendEmail();
+				if(sentmail && count >0  ){
+					
+						message += "Password: Sent to your email address." +"<br/>";
+					
+					
+				}
+				else{
+					message += "Password: " + uuid+", as we could not successfully send to your email adddress.<br/></span>";
+				}
 			}
-			if(count >0){
-				message += "Password: " + uuid+"<br/></span>";
-			}
+			
 			// Send Email here
 			
 
@@ -342,7 +351,6 @@ public class SignUpServlet extends HttpServlet {
 		catch (Exception ex) {
 
 			ex.printStackTrace();
-			//out.println("<span class=\"error\">Article upload or Author Registration Error: </span>" + ex.getMessage());
 			return articles;
 		}
 
@@ -359,6 +367,50 @@ public class SignUpServlet extends HttpServlet {
 		
 	}
 	
+	//Sends email to author to give login credentials
+	public boolean sendEmail(){
+		boolean isSent=false;
+		try {
+        	
+	         Properties ps = new Properties();
+	         ps.setProperty("mail.host", "smtp.gmail.com");
+	         ps.setProperty("mail.smtp.port", "587");
+	         ps.setProperty("mail.smtp.auth", "true");
+	         ps.setProperty("mail.smtp.starttls.enable", "true");
+
+	         Session session1 = Session.getDefaultInstance(ps, new javax.mail.Authenticator() {
+	        	 
+	         protected PasswordAuthentication getPasswordAuthentication() {
+	         return new PasswordAuthentication(from,password);}
+	             
+	         });
+
+	         MimeMessage ms = new MimeMessage(session1);
+	         ms.setText(message);
+	         ms.setFrom(new InternetAddress(from));
+	         ms.setSubject(subject);
+	            
+	         ms.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+	         Transport transport = session1.getTransport("smtp");
+	         Transport.send(ms);
+	            
+	         transport.connect(host, from, emailpassword);
+	         transport.close();
+	           
+	         out.println("  The e-mail was sent successfully"); 
+	 
+	         isSent=true;
+			  
+		    }catch (MessagingException ex){
+	        
+	        ex.printStackTrace();
+	        out.println("There were an error: " + ex.getMessage());
+	        } 
+			
+		 
+		
+		return isSent;
+	}
 	public int getAuthorId(){
 		int authorid=0;
 		if(email==null || email.equals(""))

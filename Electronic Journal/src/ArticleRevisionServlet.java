@@ -151,7 +151,6 @@ public class ArticleRevisionServlet extends HttpServlet {
 		
 		authorid = this.getAuthorId();
 		PreparedStatement pstmt = null;
-		PreparedStatement pstmtArticle = null;
 
 		try {
 			// Get connection to team database

@@ -61,6 +61,15 @@
 		<td><input type="password" name="cpassword" id="cpassword" placeholder="Confirm your Passord"/></td>
 	</tr> -->
 	<tr>
+		<td style="width:200px"><label>Title&nbsp;<em>*</em></label></td>
+		<td><select name="title" id="title" style="width:px;"><option value="0">...</option><option value="Mr">Mr.</option><option value="Ass Prof.">Assistant Prof.</option><option value="2">Dr</option><option value="3">Associate Prof.</option><option value="4">Proffesor</option><option value="5">Research Assistant</option><option value="6">Lecturer</option><option value="7">Technical Assistant</option><option value="8">Laboratory Technician</option><option value="9">Principal</option><option value="10">Director</option><option value="11">Scientist</option><option value="12">Researcher</option><option value="13">Other</option></select><input type="hidden" id="custom_list-53761c7a9d977-list-style" value="select"/><input type="hidden" id="custom_list-53761c7a9d977-count" value="13"/></td>
+	</tr>
+	
+	<tr>
+		<td style="width:200px"><label>University/Affiliation&nbsp;<em>*</em></label></td>
+		<td><input type="text" name="organisation" id="organisation"  placeholder=""/></td>
+	</tr>
+	<tr>
 		<td style="width:200px"><label>First Name&nbsp;<em>*</em></label></td>
 		<td><input type="text" name="fname" id="fname"  placeholder="Enter Given Name"/></td>
 	</tr>
@@ -78,21 +87,12 @@
 
 <div class="markout" id="author">
 
-<fieldset>
+<fieldset><legend>Article Progress</legend>
 <em>Check your email for Username and password you will use to track your article and Review other articles in order to progress your article for publication.</em>
-<legend>Article Progress</legend>
 
+
+<!--
 <table>
-	
-	<!--
-	
-	<tr>
-		<td style="width:200px"><label>Title&nbsp;<em>*</em></label></td>
-		<td><select name="title" id="title" style="width:px;"><option value="0">...</option><option value="Mr">Mr.</option><option value="Ass Prof.">Assistant Prof.</option><option value="2">Dr</option><option value="3">Associate Prof.</option><option value="4">Proffesor</option><option value="5">Research Assistant</option><option value="6">Lecturer</option><option value="7">Technical Assistant</option><option value="8">Laboratory Technician</option><option value="9">Principal</option><option value="10">Director</option><option value="11">Scientist</option><option value="12">Researcher</option><option value="13">Other</option></select><input type="hidden" id="custom_list-53761c7a9d977-list-style" value="select"/><input type="hidden" id="custom_list-53761c7a9d977-count" value="13"/></td>
-	</tr>
-	
-	
-	
 	
 	<tr>
 		<td style="width:200px"><label>Country&nbsp;<em>*</em></label></td>

@@ -3,11 +3,11 @@
 <head>
   <title>Team8 - E-Journal Site</title>
   <link rel="stylesheet" type="text/css" href="major.css">
- <!--<link rel="stylesheet" type="text/css" href="./Team8 - E-Journal Site_files/major.css">-->
+ 
   <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
   <meta http-equiv="description" content="my first page">
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+  
 </head>
 
 <body>

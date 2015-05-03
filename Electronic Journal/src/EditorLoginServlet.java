@@ -10,15 +10,6 @@ import com.mysql.jdbc.Driver;
 public class EditorLoginServlet extends HttpServlet { 
  
  
- 	public void doGet(HttpServletRequest req, HttpServletResponse res) 
- 			throws ServletException, IOException { 
- 		res.setContentType("text/html"); 
- 		PrintWriter out = res.getWriter(); 
- 		out.println("<html><body>"); 
- 		out.println("You have used GET!"); 
- 		out.println("</body></html>"); 
- 	} 
- 
  
  	@Override 
  	protected void doPost(HttpServletRequest req, HttpServletResponse res) 
@@ -40,6 +31,9 @@ public class EditorLoginServlet extends HttpServlet {
 		boolean userIsMatched = false; 
  		String surname = null; 
  		String title = null; 
+ 		
+ 		//Start session management here
+ 		HttpSession session = req.getSession(true);
 		try { 
  			con = DriverManager.getConnection( 
  					"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158", 
@@ -49,6 +43,8 @@ public class EditorLoginServlet extends HttpServlet {
  			if (resultSet.next()) { 
 				surname = resultSet.getString("surname"); 
  				title = resultSet.getString("title"); 
+ 				session.setAttribute("username",resultSet.getString("username"));
+ 				session.setAttribute("role","Editor");
  				userIsMatched = true; 
  			} else { 
 				userIsMatched = false; 
@@ -80,6 +76,7 @@ public class EditorLoginServlet extends HttpServlet {
  					); 
  			out.println("</body></html>"); 
  			System.out.println("sucessful."); 
+ 			res.sendRedirect("editor.jsp");
  		} else { 
  			res.setContentType("text/html"); 
 			PrintWriter out = res.getWriter(); 			out.println("<html><body>"); 
