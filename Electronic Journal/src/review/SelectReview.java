@@ -132,17 +132,35 @@ public class SelectReview extends HttpServlet {
 		
 		return false;
 	}
+	
+	public static boolean isReviewer(int reviewerID) {
+		int unpaid = Article.getUnpaidArticleS(reviewerID);
+		int credit = 0;
+		DBConnection dbConnection = new DBConnection();
+		PreparedStatement pstm = null;
+		String query = "SELECT credit FROM author WHERE authorID = ?;";
+		try {
+			pstm = dbConnection.createPreparedStatement(query);
+			pstm.setInt(1, reviewerID);
+			ResultSet resultSet = dbConnection.executeQuery(pstm);
+			if (resultSet.next()) {
+				credit = resultSet.getInt("credit");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		if ((credit - 3 * unpaid) < 0) {
+			return true;
+		}
+		return false;
+	}
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doGet(req, resp);
 	}
-	
-	public static void main(String[] args) {
-		SelectReview selectReview = new SelectReview();
-		System.out.println(selectReview.checkNumberOfReview(3));
-	}
-
 
 }

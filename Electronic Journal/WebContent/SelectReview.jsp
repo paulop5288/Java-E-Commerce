@@ -13,10 +13,30 @@
 	<%@ page import="java.util.List"%>
 	<%@ page import="review.*"%>
 	<%@ page import="database.*"%>
+	<%
+		//allow access only if session exists
+		String user = null;
+		if (session.getAttribute("reviewer") == null) {
+			response.sendRedirect("reviewer.jsp");
+		} else {
+			user = (String) session.getAttribute("username");
+		}
+		String userName = null;
+		String sessionID = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("username"))
+					userName = cookie.getValue();
+				if (cookie.getName().equals("JSESSIONID"))
+					sessionID = cookie.getValue();
+			}
+		}
+	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
 	</div>
-	<p><%= new Date() %></p>
+	<p><%=new Date()%></p>
 	<div id="menubar">
 		<li><a
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/index.jsp">
@@ -29,28 +49,55 @@
 				Change Password </a></li>
 	</div>
 	<div id="maincontent">
-		<div id="rightdiv"></div>
+		<div id="rightdiv">
+			<div id="login">
+				<fieldset>
+					<legend>Login - Track your Article Progress</legend>
+					<form action="/Electronic%20Journal/LoginServlet" method="POST">
+						<table>
+							<tr>
+								<td>Username</td>
+								<td><input type="text" name="username" id="username" /></td>
+							</tr>
+							<tr>
+								<td>Password</td>
+								<td><input type="password" name="password" id="password" /></td>
+							</tr>
+							<input type="hidden" name="reviewer" value="true">
+							<tr>
+								<td><input type="submit" value="login" /></td>
+								<td><input type="reset" value="reset" /></td>
+
+							</tr>
+						</table>
+					</form>
+				</fieldset>
+			</div>
+
+		</div>
 		<!-- end right div -->
+
 		<id="leftdiv">
 		<div id="select">
-		<%
+			<%
 			if (!SelectReview.checkNumberOfReview(3)) {
 				%>
-				<p>You have selected 3 articles for review.<br>
-				Please submit your review form.
-				</p>
-				<%
+			<p>
+				You have selected 3 articles for review.<br> Please submit your
+				review form.
+			</p>
+			<%
 			} else { 
 				%>
-				<br> <br> Please select the article you want to review
+			<br> <br> Please select the article you want to review
 			<form
 				action="http://localhost:8080/Electronic%20Journal/SelectReview.html"
 				method=post>
 				<table border="1" style="width: 100%">
-				<%!  private List<Article> articles = null; %>
+					<%!  private List<Article> articles = null; %>
 					<%  
 				 		articles = SelectReview.getArticlesForReview(3); %>
-				 		
+
 					<%
 						for (Article article : articles) {
 					%>
@@ -72,11 +119,11 @@
 				</table>
 				<input type="submit" value="Choose">
 			</form>
-				<%
+			<%
 			}
 		
 		%>
-			
+
 		</div>
 		<p></p>
 		<h3>Guideline for Reviewers</h3>
