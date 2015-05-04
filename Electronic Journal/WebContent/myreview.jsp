@@ -1,3 +1,4 @@
+<%@page import="org.apache.taglibs.standard.tag.common.core.ForEachSupport"%>
 <%@page import="database.DBConnection"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
@@ -43,10 +44,10 @@
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/index.jsp">
 				Home</a></li>
 		<li><a
-			href="./myreview.jsp">
-				My Reviews</a></li>
+			href="./selectreview.jsp">
+				Select Review</a></li>
 		<li><a
-			href="./submitreview.jsp">
+			href="./reviewform.jsp">
 				Submit Review</a></li>
 	</div>
 	<div id="maincontent">
@@ -68,68 +69,46 @@
 		</div>
 		<!-- end right div -->
 
-		<id="leftdiv">
-		<div id="select">
-			<%
-				if (!SelectReview.checkNumberOfReview(reviewer.getID())) {
-			%>
-			<p>
-				You have selected 3 articles for review.<br> Please submit your
-				review form.
-			</p>
-			<%
-			} else { 
-				%>
-			<br> <br> Please select the article you want to review
-			<form
-				action="http://localhost:8080/Electronic%20Journal/selectreview.html"
-				method=post>
-				<table border="1" style="width: 100%">
-					<%!  private List<Article> articles = null; %>
-					<%  
-				 		articles = SelectReview.getArticlesForReview(reviewer.getID()); %>
-
-					<%
-						for (Article article : articles) {
-					%>
+		<div id="leftdiv">
+			<div id="reviews">
+				<table style="width: 100%">
 					<tr>
-						<td><input type="checkbox" name="article"
-							value=<%=article.getArticleIDString()%>>Select</td>
-						<td><%=
-								article.getTitle()
-							%></td>
-						<td><input type="button"
-							onclick="readAbstract(<%=article.getArticleIDString()%>)"
-							value="Read Abstract"></td>
-						<p hidden id=<%=article.getArticleIDString()%>><%=article.getArticleAbstract()%></p>
+						<th>No.</th>
+						<th>title</th>
+						<th>status</th>
+						<th>download</th>
 					</tr>
-
-					<%
-						}
+					<% List<Selection> selections = Selection.getSelectedArticles(reviewer.getID()); 
+					int count = 1;
+					for (Selection selection : selections) {
+						 %> 
+					<tr>
+						<td><%= count %></td>
+						<td><%= selection.getTitle() %></td>
+						<td><%= selection.getStatus() %></td>
+						<td><input type="button" value="download"></td>
+					</tr>
+						 <%
+						 count++;
+					}
 					%>
-					<input type="hidden" name="reviewer" value=<%= reviewer.getID() %>>
 				</table>
-				<input type="submit" value="Choose">
-			</form>
-			<%
-			}
-		
-		%>
 
+
+			</div>
+			<p></p>
+			<h3>Guideline for Reviewers</h3>
+			Follow these guidelines while creating and submitting your review
+			form:
+			<p></p>
+			<p>
+				Download template <a
+					href="http://stucat.dcs.shef.ac.uk:8080/stucat008/reviewtemplate.docx">Here</a>.
+			</p>
 		</div>
-		<p></p>
-		<h3>Guideline for Reviewers</h3>
-		Follow these guidelines while creating and submitting your review
-		form:
-		<p></p>
-		<p>
-			Download template <a
-				href="http://stucat.dcs.shef.ac.uk:8080/stucat008/reviewtemplate.docx">Here</a>.
-		</p>
-		</id>
-	</div>
-	<!--End of left div -->
 
+		<!--End of left div -->
+	</div>
 	<!-- End of Main content -->
 
 

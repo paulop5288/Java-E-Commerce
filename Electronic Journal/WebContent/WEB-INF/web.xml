@@ -50,29 +50,14 @@
     <servlet-name>DownloadServlet</servlet-name>
     <url-pattern>/review/DownloadServlet</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <servlet-name>ReviewerLogin</servlet-name>
-    <servlet-class>ReviewerLogin</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ReviewerLogin</servlet-name>
-    <url-pattern>/ReviewerLogin</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>ReviewerLogout</servlet-name>
-    <servlet-class>ReviewerLogout</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ReviewerLogout</servlet-name>
-    <url-pattern>/ReviewerLogout</url-pattern>
-  </servlet-mapping>
+
   <servlet>
   	<servlet-name>SubmitReview</servlet-name>
   	<servlet-class>SubmitReview</servlet-class>
   </servlet>
   <servlet-mapping>
   	<servlet-name>SubmitReview</servlet-name>
-  	<url-pattern>/SubmitReview</url-pattern>
+  	<url-pattern>/submitreview</url-pattern>
   </servlet-mapping>
   <servlet>
   	<servlet-name>SelectReview</servlet-name>
@@ -80,7 +65,7 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>SelectReview</servlet-name>
-  	<url-pattern>/SelectReview.html</url-pattern>
+  	<url-pattern>/selectreview.html</url-pattern>
   </servlet-mapping>
   <servlet>
   	<servlet-name>LogoutServlet</servlet-name>

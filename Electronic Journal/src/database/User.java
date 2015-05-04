@@ -13,12 +13,10 @@ public class User {
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
-		String queryString = "SELECT * FROM author WHERE username = ? AND"
-				+ " password = ?;";
+		String queryString = "SELECT * FROM author WHERE username = ?;";
 		try {
 			pstm = dbConnection.createPreparedStatement(queryString);
 			pstm.setString(1, username);
-			pstm.setString(2, password);
 			resultSet = dbConnection.executeQuery(pstm);
 			if (resultSet.next()) {
 				id = resultSet.getInt("authorID");
@@ -30,7 +28,12 @@ public class User {
 				qualification = resultSet.getString("qualification");
 				origanisation = resultSet.getString("organisation");
 				specification = resultSet.getString("specialisation");
-				isMatched = true;
+				if (password.compareTo(resultSet.getString("password")) == 0) {
+					isMatched = true;
+				} else {
+					isMatched = false;
+				}
+				System.out.println(isMatched);
 			} else {
 				isMatched = false;
 			}
@@ -39,12 +42,17 @@ public class User {
 		} finally {
 			dbConnection.closeConnection();
 			try {
-				pstm.close();
+				if (pstm != null) {
+					pstm.close();
+				}
+			
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			try {
-				resultSet.close();
+				if (resultSet != null) {
+					resultSet.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

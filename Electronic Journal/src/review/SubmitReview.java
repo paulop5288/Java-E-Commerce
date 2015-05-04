@@ -3,11 +3,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import database.*;
 
 
@@ -69,5 +72,13 @@ public class SubmitReview extends HttpServlet {
 		out.println(badPoints);
 		out.println(errors);
 		out.println("</body></html>");
+	}
+	
+	public static List<Article> getDownloadedArticles() {
+		List<Article> articles = new ArrayList<Article>();
+		String query = "SELECT * FROM article A inner join review B on A.articleID = B.articleID WHERE B.reviewerID = ?;";
+		
+		
+		return articles;
 	}
 }

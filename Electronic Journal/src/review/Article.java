@@ -3,6 +3,8 @@ package review;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import database.DBConnection;
 
@@ -71,6 +73,7 @@ public class Article {
 		}
 		return -1;
 	}
+	
 	
 	@Override
 	public String toString() {
