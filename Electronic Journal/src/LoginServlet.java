@@ -29,54 +29,39 @@ public class LoginServlet extends HttpServlet {
 		boolean isAuthor = false;
 		User user = new User(username, password);
 		PrintWriter out = res.getWriter();
+
 		if (role != null && role.equalsIgnoreCase("reviewer")) {
 			isAuthor = false;
 		} else if (role != null && role.equalsIgnoreCase("author")) {
 			isAuthor = true;
 		}
-		// Start session management here
-		HttpSession session = req.getSession();
 
-		if (user.isMatched()) {
-			session.setAttribute("username", username);
-			session.setMaxInactiveInterval(30); // 30 s
+		if (isAuthor) {
+			// for author
+		} else {
 
-			// if (isAuthor) {
-			// session.setAttribute("role", "author");
-			// } else {
-			// session.setAttribute("role", "reviewer");
-			// }
-			//
-			if (!isAuthor && SelectReview.isReviewer(user.getID())) {
+			if (user.isMatched() && SelectReview.isReviewer(user.getID())) {
+				// Start session management here
+				HttpSession session = req.getSession();
+				session.setAttribute("username", username);
+				session.setMaxInactiveInterval(5*60); // 5 min
+				session.setAttribute("role", "reviewer");
+
 				res.setContentType("text/html");
-				out.println("<html><body>");
-				out.println("Hello "
-						+ user.getTitle()
-						+ "."
-						+ user.getLastName()
-						+ ", welcome back to International Journal of Software Engineering"
-						+ "\nYou are logged in as a reviewer.");
-				out.println("</body></html>");
 				Cookie userName = new Cookie("username", username);
-				userName.setMaxAge(30);
+				userName.setMaxAge(5*60);
 				res.addCookie(userName);
 				res.sendRedirect("SelectReview.jsp");
 				System.out.println("sucessful. reviewer");
-			} else if (isAuthor) {
-				// for author
-			} else if (!isAuthor) {
+
+			} else {
 				res.setContentType("text/html");
-				out.println("<html><body>");
-				out.println("Login failed: You are not a reviewer.");
-				out.println("</body></html>");
-				System.out.println("failed. reviewer");
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert(\"Username/password doesn't match.\");");
+				out.println("window.location = '/Electronic%20Journal/reviewer.jsp';");
+				out.println("</script>");
 			}
-		} else {
-			RequestDispatcher rd = getServletContext().getRequestDispatcher(
-					"/reviewer.jsp");
-			out.println("<p Either user name or password is wrong.>");
-			System.out.println("invalid");
-			rd.include(req, res);
+
 		}
 	}
 }

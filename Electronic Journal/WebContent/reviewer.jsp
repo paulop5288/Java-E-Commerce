@@ -28,9 +28,16 @@
 	</div>
 	<div id="maincontent">
 		<div id="rightdiv">
+			<%
+				//allow access only if session exists
+				if (session.getAttribute("username") != null
+						&& session.getAttribute("role") != null) {
+					response.sendRedirect("SelectReview.jsp");
+				}
+			%>
 			<div id="login">
 				<fieldset>
-					<legend>Login - Track your Article Progress</legend>
+					<legend>Login - Track your Review Progress</legend>
 					<form action="/Electronic%20Journal/LoginServlet" method="POST">
 						<table>
 							<tr>

@@ -50,17 +50,26 @@
 	</div>
 	<div id="maincontent">
 		<div id="rightdiv">
-			<p>
-				Username :
-				<%= user + userName + sessionID %></p>
+			<div id="logout">
+				<fieldset>
+				<legend>Logout</legend>
+					<p>Hi, <%=user%></p>
+					<form
+						action="http://localhost:8080/Electronic%20Journal/logout.html"
+						method="post">
+						<input type="hidden" name="role" value="reviewer"> <input
+							type="submit" value="logout">
+					</form>
+				</fieldset>
+			</div>
 		</div>
 		<!-- end right div -->
 
 		<id="leftdiv">
 		<div id="select">
 			<%
-			if (!SelectReview.checkNumberOfReview(3)) {
-				%>
+				if (!SelectReview.checkNumberOfReview(3)) {
+			%>
 			<p>
 				You have selected 3 articles for review.<br> Please submit your
 				review form.

@@ -82,4 +82,12 @@
   	<servlet-name>SelectReview</servlet-name>
   	<url-pattern>/SelectReview.html</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<servlet-name>LogoutServlet</servlet-name>
+  	<servlet-class>LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>LogoutServlet</servlet-name>
+  	<url-pattern>/logout.html</url-pattern>
+  </servlet-mapping>
 </web-app>
