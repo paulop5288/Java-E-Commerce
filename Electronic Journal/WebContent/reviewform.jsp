@@ -1,4 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@page import="java.util.ArrayList"%>
 <html>
 <head>
 <title>Team8 - E-Journal Site</title>
@@ -15,6 +16,7 @@
 		<h1>International Journal of Software Engineering</h1>
 	</div>
 	<%@ page import="java.util.Date"%>
+	<%@ page import="java.util.List" %>
 	<%@ page import="review.*" %>
 	<%@ page import="database.*" %>
 	<%
@@ -53,16 +55,19 @@
 		<legend>Review Form</legend>
 
 		<select>
-		<%	List<Article>
+		<option id="0" value="Select">Please select</option>
+		<%	List<Article> articles = SubmitReview.getDownloadedArticles(3);
+		int count = 1;
+		for (Article article : articles) {
+			%>
+			<option id=<%= count %> value="select"><%= article.getTitle() %></option>
+			<%
+			count++;
+		}
 		
 		
 		
 		%>
-			<option id="0" value="select">please select</option>
-			<option id="1" value="Genetic Algorithm for UTP">Saab</option>
-			<option id="2" value="Programming for Rasbery">Mercedes</option>
-			<option id="3" value="Sleep Application">Audi</option>
-			
 		</select> 
 		<br>
 		Please choose your expertise level <br><br>

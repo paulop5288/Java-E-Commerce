@@ -2,6 +2,7 @@ package review;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,11 +75,47 @@ public class SubmitReview extends HttpServlet {
 		out.println("</body></html>");
 	}
 	
-	public static List<Article> getDownloadedArticles() {
+	public static List<Article> getDownloadedArticles(int reviewerID) {
 		List<Article> articles = new ArrayList<Article>();
-		String query = "SELECT * FROM article A inner join review B on A.articleID = B.articleID WHERE B.reviewerID = ?;";
-		
+		String query = "SELECT * FROM article A inner join review B on A.articleID = B.articleID WHERE B.reviewerID = ? AND B.`status` = false;";
+		DBConnection dbConnection = new DBConnection();
+		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
+		try {
+			pstm = dbConnection.createPreparedStatement(query);
+			pstm.setInt(1, reviewerID);
+			resultSet = dbConnection.executeQuery(pstm);
+			while (resultSet.next()) {
+				int articleID = resultSet.getInt("articleID");
+				int authorID = resultSet.getInt("authorID");
+				String title = resultSet.getString("title");
+				String articleAbstract = resultSet
+						.getString("abstract");
+				articles.add(new Article(articleID, authorID, title,
+						articleAbstract));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
 		return articles;
 	}
+
 }

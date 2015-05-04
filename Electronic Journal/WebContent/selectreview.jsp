@@ -46,7 +46,7 @@
 			href="./myreview.jsp">
 				My Reviews</a></li>
 		<li><a
-			href="./submitreview.jsp">
+			href="./reviewform.jsp">
 				Submit Review</a></li>
 	</div>
 	<div id="maincontent">
