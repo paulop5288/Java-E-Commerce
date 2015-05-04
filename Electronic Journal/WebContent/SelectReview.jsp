@@ -16,7 +16,11 @@
 	<%
 		//allow access only if session exists
 		String user = null;
+	if(session.getAttribute("username") == null){
+	    response.sendRedirect("reviewer.jsp");
+	}else {
 		user = (String) session.getAttribute("username");
+	}
 		String userName = null;
 		String sessionID = null;
 		Cookie[] cookies = request.getCookies();
@@ -46,30 +50,9 @@
 	</div>
 	<div id="maincontent">
 		<div id="rightdiv">
-			<div id="login">
-				<fieldset>
-					<legend>Login - Track your Article Progress</legend>
-					<form action="/Electronic%20Journal/LoginServlet" method="POST">
-						<table>
-							<tr>
-								<td>Username</td>
-								<td><input type="text" name="username" id="username" /></td>
-							</tr>
-							<tr>
-								<td>Password</td>
-								<td><input type="password" name="password" id="password" /></td>
-							</tr>
-							<input type="hidden" name="reviewer" value="true">
-							<tr>
-								<td><input type="submit" value="login" /></td>
-								<td><input type="reset" value="reset" /></td>
-
-							</tr>
-						</table>
-					</form>
-				</fieldset>
-			</div>
-
+			<p>
+				Username :
+				<%= user + userName + sessionID %></p>
 		</div>
 		<!-- end right div -->
 
