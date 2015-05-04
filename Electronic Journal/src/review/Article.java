@@ -1,5 +1,11 @@
 package review;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import database.DBConnection;
+
 public class Article {
 	
 	private int articleID = 0;
@@ -32,11 +38,44 @@ public class Article {
 		return title;
 	}
 	
+	public static int getUnpaidArticleS(int authorID) {
+		DBConnection dbConnection = new DBConnection();
+		String query = "SELECT COUNT(paid) FROM article WHERE authorID = ?;";
+		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
+		try {
+			pstm = dbConnection.createPreparedStatement(query);
+			pstm.setInt(1, authorID);
+			resultSet = dbConnection.executeQuery(pstm);
+			if (resultSet.next()) {
+				return resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return -1;
+	}
 	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "Article " + articleID + " is written by author" + authorID + ".Named as " + title + "\n";
 	}
-
+	
 }
