@@ -35,7 +35,6 @@ public class DBConnection {
 		
 		try {
 			if (initConnection()) {
-				System.out.println(query.toString());
 				resultSet = query.executeQuery();
 			}
 		} catch (SQLException e) {
@@ -62,7 +61,6 @@ public class DBConnection {
 		try {
 			if (initConnection()) {
 				result = query.executeUpdate();
-				System.out.println(query.toString());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -76,7 +74,6 @@ public class DBConnection {
 		try {
 			if (initConnection()) {
 				result = stmt.executeUpdate(query);
-				System.out.println(query.toString());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

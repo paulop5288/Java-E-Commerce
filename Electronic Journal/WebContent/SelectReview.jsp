@@ -16,11 +16,7 @@
 	<%
 		//allow access only if session exists
 		String user = null;
-		if (session.getAttribute("reviewer") == null) {
-			response.sendRedirect("reviewer.jsp");
-		} else {
-			user = (String) session.getAttribute("username");
-		}
+		user = (String) session.getAttribute("username");
 		String userName = null;
 		String sessionID = null;
 		Cookie[] cookies = request.getCookies();
