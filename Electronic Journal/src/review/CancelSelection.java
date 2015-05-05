@@ -23,7 +23,7 @@ public class CancelSelection extends HttpServlet {
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		String query = "DELETE FROM article_selection WHERE "
-				+ "reviewerID = ? AND articleID = ?;";
+				+ "reviewerID = ? AND review_Article_ID = ?;";
 		try {
 			pstm = dbConnection.createPreparedStatement(query);
 			pstm.setInt(1, reviewerID);

@@ -57,7 +57,7 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>SubmitReview</servlet-name>
-  	<url-pattern>/submitreview</url-pattern>
+  	<url-pattern>/submitreview.html</url-pattern>
   </servlet-mapping>
   <servlet>
   	<servlet-name>SelectReview</servlet-name>

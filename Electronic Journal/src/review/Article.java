@@ -40,7 +40,7 @@ public class Article {
 		return title;
 	}
 	
-	public static int getUnpaidArticleS(int authorID) {
+	public static int getUnpaidArticlesCount(int authorID) {
 		DBConnection dbConnection = new DBConnection();
 		String query = "SELECT COUNT(paid) FROM article WHERE authorID = ?;";
 		PreparedStatement pstm = null;

@@ -24,24 +24,28 @@ public class SelectReview extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String articleIDString = req.getParameter("article");
-		if (articleIDString != null) {
-			reviewerID = Integer.parseInt(req.getParameter("reviewer"));
+		reviewerID = Integer.parseInt(req.getParameter("reviewer"));
+		String[] articleIDs = req.getParameterValues("article");
+		int selected = Selection.getSelectedArticles(reviewerID).size();
+		if (articleIDs != null && articleIDs.length + selected <= 3) {
+			
 			DBConnection dbConnection = new DBConnection();
 			PreparedStatement pstm = null;
-			String query = "INSERT INTO article_selection (reviewerID,articleID,status) VALUES "
-					+ "(?,?,?);";
+			String query = "INSERT INTO article_selection (submitted_Article_ID,review_Article_ID,reviewerID,reviewformID,status) VALUES "
+					+ "(?,?,?,NULL,?);";
 			// String updateArticle =
 			// "UPDATE article set no_reviewer = no_reviewer + 1 where"
 			// + " article.articleID = ?;";
-			String[] articleIDs = req.getParameterValues("article");
+			
 			for (String articleID : articleIDs) {
 				System.out.println(articleID);
 				try {
+
 					pstm = dbConnection.createPreparedStatement(query);
-					pstm.setInt(1, reviewerID);
+					pstm.setInt(1, SelectReview.getUnpaidArticleID(reviewerID));
 					pstm.setInt(2, Integer.parseInt(articleID));
-					pstm.setString(3, "selected");
+					pstm.setInt(3, reviewerID);
+					pstm.setString(4, "selected");
 					int count = dbConnection.executeUpdate(pstm);
 					if (count == 0) {
 						System.out.println("failed to insert.");
@@ -53,11 +57,12 @@ public class SelectReview extends HttpServlet {
 			resp.setContentType("text/html");
 			resp.sendRedirect("myreview.jsp");
 		} else {
-			resp.setContentType("text/html");
 			PrintWriter out = resp.getWriter();
-			out.println("<html><body>");
-			out.println("You have not select any article.");
-			out.println("</body></html>");
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"You can only select 3 articles for reviewing.\");");
+			out.println("window.location = '/Electronic%20Journal/selectreview.jsp';");
+			out.println("</script>");
 		}
 	}
 
@@ -65,18 +70,17 @@ public class SelectReview extends HttpServlet {
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		List<Article> articles = new ArrayList<Article>();
-		String getArticleQuery = "select article.articleID, article.authorID, article.title, article.abstract from article "
-				+ "where article.articleID not in "
-				+ "(select review.articleID from review where review.reviewerID = ?) "
-				+ "and article.authorID != ? "
-				+ "and article.passed_review + article.no_reviewer <= ?;";
+		String getArticleQuery = "SELECT article.articleID, article.authorID, article.title,"
+				+ " article.abstract FROM article WHERE article.articleID NOT IN "
+				+ "(SELECT A.articleID FROM article A INNER JOIN article_selection B "
+				+ "ON A.articleID = B.review_Article_ID WHERE B.reviewerID = ?) "
+				+ "AND article.authorID != ? AND article.passed_review + article.no_reviewer <= 5;";
 		try {
 
 			if (SelectReview.checkNumberOfReview(reviewerID)) {
 				pstm = dbConnection.createPreparedStatement(getArticleQuery);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, reviewerID);
-				pstm.setInt(3, 5);
 				ResultSet resultSet = dbConnection.executeQuery(pstm);
 				for (int i = 0; i < 5; i++) {
 					if (resultSet.next()) {
@@ -120,8 +124,42 @@ public class SelectReview extends HttpServlet {
 		return false;
 	}
 
+	public static int getUnpaidArticleID(int reviewerID) {
+		DBConnection dbConnection = new DBConnection();
+		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
+		String query = "SELECT articleID FROM article WHERE authorID = ? AND paid = false;";
+		try {
+			pstm = dbConnection.createPreparedStatement(query);
+			pstm.setInt(1, reviewerID);
+			resultSet = pstm.executeQuery();
+			if (resultSet.next()) {
+				return resultSet.getInt("articleID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return 0;
+	}
+
 	public static boolean isReviewer(int reviewerID) {
-		int unpaid = Article.getUnpaidArticleS(reviewerID);
+		int unpaid = Article.getUnpaidArticlesCount(reviewerID);
 		int credit = 0;
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
@@ -150,6 +188,7 @@ public class SelectReview extends HttpServlet {
 		// TODO Auto-generated method stub
 		super.doGet(req, resp);
 	}
+
 	public static void main(String[] args) {
 		System.out.println(SelectReview.isReviewer(3));
 	}

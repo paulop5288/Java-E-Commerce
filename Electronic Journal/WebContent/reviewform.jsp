@@ -56,7 +56,7 @@
 
 		<select>
 		<option id="0" value="Select">Please select</option>
-		<%	List<Article> articles = SubmitReview.getDownloadedArticles(3);
+		<%	List<Article> articles = SubmitReview.getDownloadedArticles(reviewer.getID());
 		int count = 1;
 		for (Article article : articles) {
 			%>
@@ -77,6 +77,11 @@
 			<input type="radio" name="level" value="expert">Expert <input
 				type="radio" name="level" value="knowledgeable">Knoweledgeable
 			<input type="radio" name="level" value="outsider">Outsider <br>
+			Please give your opinion about this article
+			<input type="radio" name="level" value="champion">champion <input
+				type="radio" name="level" value="favourable">favourable
+			<input type="radio" name="level" value="indifferent">indifferent <br>
+			<input type="radio" name="level" value="indifferent">indifferent <br>
 			<br> Please write a summary of the article <br>
 			<br> Abstract <br>
 			<textarea rows="15" cols="100" name="abstract"></textarea>
