@@ -42,7 +42,8 @@ public class Article {
 	
 	public static int getUnpaidArticlesCount(int authorID) {
 		DBConnection dbConnection = new DBConnection();
-		String query = "SELECT COUNT(paid) FROM article WHERE authorID = ?;";
+		String query = "SELECT COUNT(paid) FROM article WHERE authorID = ? AND "
+				+ "paid = false;";
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
 		try {

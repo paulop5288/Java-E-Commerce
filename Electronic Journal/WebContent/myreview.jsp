@@ -35,6 +35,10 @@
 			}
 		}
 		User reviewer = new User(user, "");
+		if (!SelectReview.isReviewer(reviewer.getID())) {
+			session.invalidate();
+			response.sendRedirect("reviewer.jsp");
+		}
 	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
@@ -104,10 +108,14 @@
 						</td>
 						</form>
 						<% 
+						} else if (selection.getStatus().equalsIgnoreCase("reviewed")){
+							%>
+						<td>reviewed</td>
+						<%
 						} else {
 							%>
-						<td>reviewing</td>
-						<%
+							<td>reviewing</td>
+							<%
 						}
 						%>
 

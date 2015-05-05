@@ -39,6 +39,10 @@
 			}
 		}
 		User reviewer = new User(user, "");
+		if (!SelectReview.isReviewer(reviewer.getID())) {
+			session.invalidate();
+			response.sendRedirect("reviewer.jsp");
+		}
 	%>
 	<p><%= new Date() %></p>
 
@@ -53,35 +57,30 @@
 	<br>
 	<fieldset>
 		<legend>Review Form</legend>
-
-		<select>
+		<form method="post"
+			action="http://localhost:8080/Electronic%20Journal/submitreview.html">
+		<select name="article">
 		<option id="0" value="Select">Please select</option>
 		<%	List<Article> articles = SubmitReview.getDownloadedArticles(reviewer.getID());
 		int count = 1;
 		for (Article article : articles) {
 			%>
-			<option id=<%= count %> value="select"><%= article.getTitle() %></option>
+			<option id=<%= count %> value=<%= article.getArticleIDString() %>><%= article.getTitle() %></option>
 			<%
 			count++;
 		}
-		
-		
-		
 		%>
 		</select> 
 		<br>
 		Please choose your expertise level <br><br>
-		
-		<form method="post"
-			action="http://localhost:8080/Electronic%20Journal/submitreview">
 			<input type="radio" name="level" value="expert">Expert <input
 				type="radio" name="level" value="knowledgeable">Knoweledgeable
-			<input type="radio" name="level" value="outsider">Outsider <br>
-			Please give your opinion about this article
-			<input type="radio" name="level" value="champion">champion <input
-				type="radio" name="level" value="favourable">favourable
-			<input type="radio" name="level" value="indifferent">indifferent <br>
-			<input type="radio" name="level" value="indifferent">indifferent <br>
+			<input type="radio" name="level" value="outsider">Outsider <br><br>
+			Please give your opinion about this article<br><br>
+			<input type="radio" name="score" value="champion">champion <input
+				type="radio" name="score" value="favourable">favourable
+			<input type="radio" name="score" value="indifferent">indifferent <br>
+			<input type="radio" name="score" value="indifferent">detractor <br>
 			<br> Please write a summary of the article <br>
 			<br> Abstract <br>
 			<textarea rows="15" cols="100" name="abstract"></textarea>
@@ -96,6 +95,7 @@
 			<textarea rows="15" cols="100" name="error"></textarea>
 			<br>
 			<br> <input type="submit" value="Submit">
+			<input type="hidden" name="reviewer" value=<%= reviewer.getID() %>>
 		</form>
 	</fieldset>
 </body>

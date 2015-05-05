@@ -32,7 +32,7 @@
 				//allow access only if session exists
 				if (session.getAttribute("username") != null
 						&& session.getAttribute("role") != null) {
-					response.sendRedirect("SelectReview.jsp");
+					response.sendRedirect("selectreview.jsp");
 				}
 			%>
 			<div id="login">

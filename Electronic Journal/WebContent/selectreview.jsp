@@ -16,6 +16,7 @@
 	<%
 		//allow access only if session exists
 		String user = null;
+		
 		if (session.getAttribute("username") == null) {
 			response.sendRedirect("reviewer.jsp");
 		} else {
@@ -33,6 +34,10 @@
 			}
 		}
 		User reviewer = new User(user, "");
+		if (!SelectReview.isReviewer(reviewer.getID())) {
+			session.invalidate();
+			response.sendRedirect("reviewer.jsp");
+		}
 	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>

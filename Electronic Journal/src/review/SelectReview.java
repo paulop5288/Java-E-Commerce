@@ -160,23 +160,7 @@ public class SelectReview extends HttpServlet {
 
 	public static boolean isReviewer(int reviewerID) {
 		int unpaid = Article.getUnpaidArticlesCount(reviewerID);
-		int credit = 0;
-		DBConnection dbConnection = new DBConnection();
-		PreparedStatement pstm = null;
-		String query = "SELECT credit FROM author WHERE authorID = ?;";
-		try {
-			pstm = dbConnection.createPreparedStatement(query);
-			pstm.setInt(1, reviewerID);
-			ResultSet resultSet = dbConnection.executeQuery(pstm);
-			if (resultSet.next()) {
-				credit = resultSet.getInt("credit");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		if ((credit - 3 * unpaid) < 0) {
+		if (unpaid > 0) {
 			return true;
 		}
 		return false;
