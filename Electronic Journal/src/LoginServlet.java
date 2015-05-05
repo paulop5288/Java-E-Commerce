@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
 		if (isAuthor) {
 			// for author
 		} else {
-
+			
 			if (user.isMatched() && SelectReview.isReviewer(user.getID())) {
 				// Start session management here
 				HttpSession session = req.getSession();

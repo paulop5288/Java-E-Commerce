@@ -52,7 +52,6 @@ public class SubmitReview extends HttpServlet {
 			pstm.setString(7, errors);
 			
 			int updateResult = dbConnection.executeUpdate(pstm);
-			System.out.println(updateResult);
 			dbConnection.closeConnection();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

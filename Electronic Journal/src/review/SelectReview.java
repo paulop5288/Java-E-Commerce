@@ -95,8 +95,6 @@ public class SelectReview extends HttpServlet {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println(articles);
 		return articles;
 	}
 
@@ -151,6 +149,9 @@ public class SelectReview extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doGet(req, resp);
+	}
+	public static void main(String[] args) {
+		System.out.println(SelectReview.isReviewer(3));
 	}
 
 }
