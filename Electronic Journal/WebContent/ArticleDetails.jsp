@@ -33,11 +33,11 @@ catch(Exception e){
 }
 
 String query = "select * from article WHERE articleID="+ articleID;
+
 try {
 	stmt = con.createStatement();
 	result = stmt.executeQuery(query);
 	if (result.next()) {
-		
 		
 		details+="<td>Title:</td>"+result.getString("title");
 		details+="<td>Abstract:</td><td>"+result.getString("abstract");
