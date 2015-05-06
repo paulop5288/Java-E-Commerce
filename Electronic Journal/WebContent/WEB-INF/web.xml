@@ -83,4 +83,12 @@
   	<servlet-name>CancelSelection</servlet-name>
   	<url-pattern>/review/cancelselection.html</url-pattern>
   </servlet-mapping>
+    <servlet>
+  	<servlet-name>SearchServlet</servlet-name>
+  	<servlet-class>search.SearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>SearchServlet</servlet-name>
+  	<url-pattern>/search.html</url-pattern>
+  </servlet-mapping>
 </web-app>
