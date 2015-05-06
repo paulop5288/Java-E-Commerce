@@ -33,7 +33,6 @@ public class User {
 				} else {
 					isMatched = false;
 				}
-				System.out.println(isMatched);
 			} else {
 				isMatched = false;
 			}

@@ -1,4 +1,5 @@
-<%@page import="org.apache.taglibs.standard.tag.common.core.ForEachSupport"%>
+<%@page
+	import="org.apache.taglibs.standard.tag.common.core.ForEachSupport"%>
 <%@page import="database.DBConnection"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
@@ -34,6 +35,10 @@
 			}
 		}
 		User reviewer = new User(user, "");
+		if (!SelectReview.isReviewer(reviewer.getID())) {
+			session.invalidate();
+			response.sendRedirect("reviewer.jsp");
+		}
 	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
@@ -43,12 +48,8 @@
 		<li><a
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/index.jsp">
 				Home</a></li>
-		<li><a
-			href="./selectreview.jsp">
-				Select Review</a></li>
-		<li><a
-			href="./reviewform.jsp">
-				Submit Review</a></li>
+		<li><a href="./selectreview.jsp"> Select Review</a></li>
+		<li><a href="./reviewform.jsp"> Submit Review</a></li>
 	</div>
 	<div id="maincontent">
 		<div id="rightdiv">
@@ -76,19 +77,50 @@
 						<th>No.</th>
 						<th>title</th>
 						<th>status</th>
-						<th>download</th>
+						<th></th>
+						<th></th>
 					</tr>
 					<% List<Selection> selections = Selection.getSelectedArticles(reviewer.getID()); 
 					int count = 1;
 					for (Selection selection : selections) {
-						 %> 
+						 %>
+
 					<tr>
+						<form action="download.html" method="post">
 						<td><%= count %></td>
 						<td><%= selection.getTitle() %></td>
 						<td><%= selection.getStatus() %></td>
-						<td><input type="button" value="download"></td>
+						<td><input type="hidden" name="articleID"
+							value=<%= selection.getArticleID() %>> <input
+							type="hidden" name="reviewerID" value=<%= reviewer.getID() %>>
+							<input type="submit" value="download"></td>
+						</form>
+
+
+						<%
+						if (selection.getStatus().equalsIgnoreCase("selected")) {
+							%>
+						<form action="cancelselection.html" method="post">
+						<td><input type="submit" value="cancel"> <input
+							type="hidden" name="articleID"
+							value=<%= selection.getArticleID() %>> <input
+							type="hidden" name="reviewerID" value=<%= reviewer.getID() %>>
+						</td>
+						</form>
+						<% 
+						} else if (selection.getStatus().equalsIgnoreCase("reviewed")){
+							%>
+						<td>reviewed</td>
+						<%
+						} else {
+							%>
+							<td>reviewing</td>
+							<%
+						}
+						%>
+
 					</tr>
-						 <%
+					<%
 						 count++;
 					}
 					%>

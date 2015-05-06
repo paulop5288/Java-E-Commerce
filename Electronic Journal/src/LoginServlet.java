@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
 		if (isAuthor) {
 			// for author
 		} else {
-
+			
 			if (user.isMatched() && SelectReview.isReviewer(user.getID())) {
 				// Start session management here
 				HttpSession session = req.getSession();
@@ -54,6 +54,12 @@ public class LoginServlet extends HttpServlet {
 				res.sendRedirect("selectreview.jsp");
 				System.out.println("sucessful. reviewer");
 
+			} else if (user.isMatched() && !SelectReview.isReviewer(user.getID())) {
+				res.setContentType("text/html");
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert(\"You are not a reviewer.\");");
+				out.println("window.location = '/Electronic%20Journal/reviewer.jsp';");
+				out.println("</script>");
 			} else {
 				res.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");

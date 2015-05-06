@@ -48,16 +48,16 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>DownloadServlet</servlet-name>
-    <url-pattern>/review/DownloadServlet</url-pattern>
+    <url-pattern>/download.html</url-pattern>
   </servlet-mapping>
 
   <servlet>
   	<servlet-name>SubmitReview</servlet-name>
-  	<servlet-class>SubmitReview</servlet-class>
+  	<servlet-class>review.SubmitReview</servlet-class>
   </servlet>
   <servlet-mapping>
   	<servlet-name>SubmitReview</servlet-name>
-  	<url-pattern>/submitreview</url-pattern>
+  	<url-pattern>/submitreview.html</url-pattern>
   </servlet-mapping>
   <servlet>
   	<servlet-name>SelectReview</servlet-name>
@@ -74,5 +74,13 @@
   <servlet-mapping>
   	<servlet-name>LogoutServlet</servlet-name>
   	<url-pattern>/logout.html</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>CancelSelection</servlet-name>
+  	<servlet-class>review.CancelSelection</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>CancelSelection</servlet-name>
+  	<url-pattern>/cancelselection.html</url-pattern>
   </servlet-mapping>
 </web-app>

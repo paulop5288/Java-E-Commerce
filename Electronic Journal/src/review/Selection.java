@@ -38,16 +38,16 @@ public class Selection {
 	public static List<Selection> getSelectedArticles(int reviewerID) {
 		ArrayList<Selection> selections = new ArrayList<Selection>();
 		DBConnection dbConnection = new DBConnection();
-		String query = "SELECT A.reviewerID, A.articleID, A.`status`, B.title FROM article_selection A inner join article B on A.articleID = B.articleID WHERE A.reviewerID = ? AND status != ?;";
+		String query = "SELECT A.reviewerID, A.review_Article_ID, A.`status`, B.title FROM article_selection A inner join article B on A.review_Article_ID = B.articleID WHERE A.submitted_Article_ID = ?;";
+		int unpaidArticleID = SelectReview.getUnpaidArticleID(reviewerID);
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
 		try {
 			pstm = dbConnection.createPreparedStatement(query);
-			pstm.setInt(1, reviewerID);
-			pstm.setString(2, "reviewed");
+			pstm.setInt(1, unpaidArticleID);
 			resultSet = dbConnection.executeQuery(pstm);
 			while (resultSet.next()) {
-				selections.add(new Selection(resultSet.getInt("articleID"), resultSet.getInt("reviewerID"), resultSet.getString("status"), resultSet.getString("title")));
+				selections.add(new Selection(resultSet.getInt("review_Article_ID"), resultSet.getInt("reviewerID"), resultSet.getString("status"), resultSet.getString("title")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
