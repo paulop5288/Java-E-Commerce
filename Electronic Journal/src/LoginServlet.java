@@ -51,20 +51,20 @@ public class LoginServlet extends HttpServlet {
 				Cookie userName = new Cookie("username", username);
 				userName.setMaxAge(5*60);
 				res.addCookie(userName);
-				res.sendRedirect("selectreview.jsp");
+				res.sendRedirect("review/selectreview.jsp");
 				System.out.println("sucessful. reviewer");
 
 			} else if (user.isMatched() && !SelectReview.isReviewer(user.getID())) {
 				res.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");
 				out.println("alert(\"You are not a reviewer.\");");
-				out.println("window.location = '/Electronic%20Journal/reviewer.jsp';");
+				out.println("window.location = 'reviewer.jsp';");
 				out.println("</script>");
 			} else {
 				res.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");
 				out.println("alert(\"Username/password doesn't match.\");");
-				out.println("window.location = '/Electronic%20Journal/reviewer.jsp';");
+				out.println("window.location = 'reviewer.jsp';");
 				out.println("</script>");
 			}
 

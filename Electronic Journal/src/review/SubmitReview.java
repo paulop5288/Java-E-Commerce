@@ -105,7 +105,7 @@ public class SubmitReview extends HttpServlet {
 				resp.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");
 				out.println("alert(\"Thank you for submitting the review.\");");
-				out.println("window.location = '/Electronic%20Journal/myreview.jsp';");
+				out.println("window.location = './myreview.jsp';");
 				out.println("</script>");
 				
 			}

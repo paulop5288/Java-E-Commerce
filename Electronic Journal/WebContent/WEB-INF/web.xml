@@ -65,7 +65,7 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>SelectReview</servlet-name>
-  	<url-pattern>/selectreview.html</url-pattern>
+  	<url-pattern>/review/selectreview.html</url-pattern>
   </servlet-mapping>
   <servlet>
   	<servlet-name>LogoutServlet</servlet-name>
@@ -81,6 +81,6 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>CancelSelection</servlet-name>
-  	<url-pattern>/cancelselection.html</url-pattern>
+  	<url-pattern>/review/cancelselection.html</url-pattern>
   </servlet-mapping>
 </web-app>

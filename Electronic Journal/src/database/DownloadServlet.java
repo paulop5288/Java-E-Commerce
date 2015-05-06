@@ -93,7 +93,7 @@ public class DownloadServlet extends HttpServlet {
 						resp.setContentType("text/html");
 						out.println("<script type=\"text/javascript\">");
 						out.println("alert(\"You have submitted your review.\");");
-						out.println("window.location = '/Electronic%20Journal/myreview.jsp';");
+						out.println("window.location = './myreview.jsp';");
 						out.println("</script>");
 					}
 				}

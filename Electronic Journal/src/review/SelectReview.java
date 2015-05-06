@@ -61,7 +61,7 @@ public class SelectReview extends HttpServlet {
 			resp.setContentType("text/html");
 			out.println("<script type=\"text/javascript\">");
 			out.println("alert(\"You can only select 3 articles for reviewing.\");");
-			out.println("window.location = '/Electronic%20Journal/selectreview.jsp';");
+			out.println("window.location = 'selectreview.jsp';");
 			out.println("</script>");
 		}
 	}
