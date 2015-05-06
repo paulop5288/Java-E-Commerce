@@ -33,8 +33,6 @@
     
         <%
 
-       
-
     Connection con=null;
 
     Statement st=null;

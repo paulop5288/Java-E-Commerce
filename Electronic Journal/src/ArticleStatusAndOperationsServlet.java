@@ -7,7 +7,7 @@ import java.sql.*;
 
 import com.mysql.jdbc.Driver;
 
-public class ArticleStatusAndOperationsServlet {
+public class ArticleStatusAndOperationsServlet extends HttpServlet{
 	private String editordashboard="";
 	private int serial=1,authorid=0,articleid=0;
 	private Connection con = null;
@@ -130,7 +130,7 @@ String getArticleDetail(int articleID, int authorID){
 			details+="<td>Title:</td>"+result1.getString("title");
 			details+="<td>Abstract:</td><td>"+result1.getString("abstract");
 			details+="<td></td><td><a href=\""+result1.getString("article_file")+"\"> Download Full Article</a></td>";
-			details+="<td> No. of Reviews:</td><td>" + result1.getInt("no_of_reviews")+"</td>";
+			details+="<td> No. of Reviews:</td><td>" + result1.getInt("no_reviewer")+"</td>";
 			details+="<td> No. of Author's Reviews:</td><td>" + result1.getInt("author_reviews")+"</td>";
 					} 
 		details+="<a href=\" Review.jsp\"> Review Article</a> <a href=\"editor/publish.jsp\">Publish Article</a><a href=\"editor/reject.jsp?articleid=" +articleID + "\">Reject Article</a>";

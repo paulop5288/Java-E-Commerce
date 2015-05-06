@@ -12,12 +12,11 @@ import java.util.*;
 
 public class ArticleRevisionServlet extends HttpServlet {
 
-	private String email = "", revision = "", title = "", fname = "",
-			lname = "",message="";
+	private String email = "", revision = "", title = "", message="",filepath="";
 	private String curDir ="";
 	PrintWriter out;
 	//Article credentials
-	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="uploads/";
+	
 	private File file;
 	InputStream inps = null;
 	private int maxFileSize = 10240000;
@@ -47,7 +46,7 @@ public class ArticleRevisionServlet extends HttpServlet {
 		res.setContentType("text/html");
 		out = res.getWriter();
 		ServletContext context = req.getServletContext();
-		filepath = context.getInitParameter("filepath");
+		filepath = context.getInitParameter("filepathrevised");
 		curDir=req.getContextPath();
 		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
 		out.println(message);message="";
@@ -75,7 +74,7 @@ public class ArticleRevisionServlet extends HttpServlet {
 					FileItem fItem = (FileItem)i.next();
 					if(!fItem.isFormField()){
 						//Get the uploaded file parameters and process them
-					message += "<p>Trying to upload submited Article...</p><hr/>";
+					message += "<p>Trying to upload Revised Article...</p><hr/>";
 					String fileName = fItem.getName();
 					
 					//Stream will be saved to database as backup for file save.
@@ -84,7 +83,9 @@ public class ArticleRevisionServlet extends HttpServlet {
 						message += "Got the file:" + fItem.getName()+"<br/>";
 					}
 					else{
-						message += "Got NO file: Name=" + fItem.getName();
+						message += "Got NO file: Please attach the revised version of article!";
+						out.println(message);
+						return;
 					}
 					boolean isInMemory = fItem.isInMemory();
 					long byteSize = fItem.getSize();
@@ -107,15 +108,16 @@ public class ArticleRevisionServlet extends HttpServlet {
 						fieldValue = fItem.getString();
 						//message += fieldName + ": " + fieldValue + "<br/>";
 						switch(fieldName){
-						
-						case "email":
-							email=fieldValue; break;
 						case "revision":
 							revision = fieldValue; break;
 						case "version":
 							version=Integer.parseInt(fieldValue); break;
 						case "title":
 							title=fieldValue; break;
+						case "authorid":
+							authorid=Integer.parseInt(fieldValue); break;
+						case "articleid":
+							articleid=Integer.parseInt(fieldValue); break;
 						default:
 							//message+= "<p>Unknown field added</p>";
 						}
@@ -125,7 +127,8 @@ public class ArticleRevisionServlet extends HttpServlet {
 			}
 			catch(Exception ex){
 				message= ex.getMessage();
-				out.println("<span class=\"error\">Fileupload error: </span>" + message + ":"+ curDir);
+				out.println("<span class=\"error\">Fileupload error: Please, Select a valid file.</span>");
+				out.println("<span class=\"error\">Fileupload error: " + message +"</span>");
 				return;
 			}
 		}
@@ -136,11 +139,6 @@ public class ArticleRevisionServlet extends HttpServlet {
 		HttpSession session = req.getSession(true);
 		
 
-		if (email.trim().compareTo("") == 0) {
-			message="Email address cannot be empty.</body></html>";
-			out.println(message);
-			return;
-		}
 		
 		if (revision.trim().compareTo("") == 0) {
 			message="Please describe how you have addressed the errors from reviewers.</body></html>";
@@ -158,8 +156,8 @@ public class ArticleRevisionServlet extends HttpServlet {
 					myPassword);
 			int count=0;
 			
-			//Register new author only if not previously registered.
-			if(authorid>0){
+			//Record information about revised article.
+			
 				pstmt = dbCon
 					.prepareStatement("INSERT INTO articlerevision(id,authorid,articleid,revision,revision_no,filepath) VALUES (null, ?, ?,?,?,?)");
 				pstmt.setInt(1, authorid);
@@ -167,13 +165,10 @@ public class ArticleRevisionServlet extends HttpServlet {
 				pstmt.setString(3, revision);
 				pstmt.setInt(4, version);
 				pstmt.setString(5, filepath);
-				
 				count = pstmt.executeUpdate();
-			}
 
 			if(count > 0){
-				authorid = this.getAuthorId();
-				message="Hello " + fname
+				message="Hello " + session.getAttribute("username")
 				+ ", You have succesfully submitted your article revision<br/>";
 				
 				out.println(message);

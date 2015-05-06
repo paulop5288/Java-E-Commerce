@@ -7,8 +7,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="major.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Article Details</title>
 </head>
 <body>
 <%
@@ -16,7 +17,7 @@
 	 Statement stmt = null;
 	 ResultSet result = null;
 	 String details="";
-	 int articleID=Integer.parseInt(request.getParameter("articleID"));
+	 int articleID=Integer.parseInt(request.getParameter("article"));
 try{
 	con = DriverManager.getConnection(
 			"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158",
@@ -26,7 +27,7 @@ try{
 }
 catch(Exception e){
 	
-	e.printStackTrace();
+	//e.printStackTrace();
 	out.print(e.getMessage());
 	return;
 }
@@ -41,19 +42,19 @@ try {
 		details+="<td>Title:</td>"+result.getString("title");
 		details+="<td>Abstract:</td><td>"+result.getString("abstract");
 		details+="<td></td><td><a href=\""+result.getString("article_file")+"\"> Download Full Article</a></td>";
-		details+="<td> No. of Reviews:</td><td>" + result.getInt("no_of_reviews")+"</td>";
-		details+="<td> No. of Author's Reviews:</td><td>" + result.getInt("author_reviews")+"</td>";
+		details+="<td> No. of Reviews:</td><td>" + result.getInt("no_reviewer")+"</td>";
+		details+="<td> No. of Author's Reviews:</td><td>" + result.getInt("author_review")+"</td>";
 				} 
 	details+="<a href=\" Review.jsp\"> Review Article</a> <a href=\"editor/publish.jsp\">Publish Article</a><a href=\"editor/reject.jsp?articleid=" +articleID + "\">Reject Article</a>";
 	
 }catch (SQLException e) {
-	e.printStackTrace();
+	//e.printStackTrace();
 	out.print(e.getMessage());
 }
 finally {
 	try {
-		if (stmt != null) {
-			stmt.close();
+		if (con != null) {
+			con.close();
 		}
 
 	} catch (SQLException e) {

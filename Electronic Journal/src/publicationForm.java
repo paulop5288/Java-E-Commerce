@@ -17,13 +17,14 @@ import javax.servlet.http.*;
 
 public class publicationForm extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private String message="";
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public publicationForm() {
         super();
-        // TODO Auto-generated constructor stub
+        
     }
 
 	/**
@@ -50,6 +51,13 @@ public class publicationForm extends HttpServlet {
         String keyword = req.getParameter("Keyword");
         String Editor_nots = req.getParameter("message");
 		PrintWriter out = res.getWriter();
+		
+		if (title.trim().compareTo("") == 0) {
+			message="Please, enter a title to describe this publication.</body></html>";
+			out.println(message);
+			return;
+		}
+
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -71,15 +79,16 @@ public class publicationForm extends HttpServlet {
 		ps.setString(9, Editor_nots);
 		int i = ps.executeUpdate();
         if(i!=0)
-            out.println("The Form has been submitted successfully...");
+            out.println("A new Publication has been successfully created...");
             
           else
-            out.println("Submission Unsuccessful");
+            out.println(" New Publication NOT created");
 		ps.close();
 		con.close();}
 		catch(SQLException e){
 			e.printStackTrace();
-			System.err.println("error");
+			out.println("Error:" + e.getMessage());
+			
 					}
 		// TODO Auto-generated method stub
 	}
