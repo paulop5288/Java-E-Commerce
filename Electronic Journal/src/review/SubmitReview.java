@@ -76,7 +76,14 @@ public class SubmitReview extends HttpServlet {
 				updateResult = pstm.executeUpdate();
 				System.out.println(updateResult);
 				
-				// get updatedtable submitted_Article_ID
+				// update article table
+				pstm = dbConnection.createPreparedStatement("UPDATE article SET "
+						+ "passed_review = passed_review + 1 WHERE articleID = ?;");
+				pstm.setInt(1, articleID);
+				updateResult = pstm.executeUpdate();
+				System.out.println(updateResult);
+				
+				// get updated table submitted_Article_ID
 				pstm = dbConnection.createPreparedStatement("SELECT COUNT(status), submitted_Article_ID FROM "
 						+ "article_selection WHERE submitted_Article_ID = "
 						+ "(SELECT submitted_Article_ID FROM article_selection "
@@ -105,7 +112,7 @@ public class SubmitReview extends HttpServlet {
 				resp.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");
 				out.println("alert(\"Thank you for submitting the review.\");");
-				out.println("window.location = './myreview.jsp';");
+				out.println("window.location = 'review/myreview.jsp';");
 				out.println("</script>");
 				
 			}

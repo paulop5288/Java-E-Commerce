@@ -91,4 +91,12 @@
   	<servlet-name>SearchServlet</servlet-name>
   	<url-pattern>/search.html</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<servlet-name>Test</servlet-name>
+  	<servlet-class>review.Test</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>Test</servlet-name>
+  	<url-pattern>/Test</url-pattern>
+  </servlet-mapping>
 </web-app>

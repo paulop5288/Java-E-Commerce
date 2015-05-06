@@ -25,22 +25,20 @@ public class LogoutServlet extends HttpServlet {
 			}
 		}
 		// invalidate the session if exists
-		HttpSession session = req.getSession(false);
-		System.out.println("User=" + session.getAttribute("username"));
-		System.out.println("Role=" + session.getAttribute("role"));
-		role = (String) session.getAttribute("role");
+		HttpSession session = req.getSession(false);		
 		if (session != null) {
+			role = (String) session.getAttribute("role");
+			if (role.equalsIgnoreCase("author")) {
+				// back to author home page
+			} else if (role.equalsIgnoreCase("reviewer")) {
+				resp.sendRedirect("reviewer.jsp");
+			} else {
+				// back to home page
+			}
 			session.invalidate();
-		} 
-		if (role.equalsIgnoreCase("author")) {
-			
-		} else if (role.equalsIgnoreCase("reviewer")) {
-			resp.sendRedirect("reviewer.jsp");
 		} else {
 			// back to home page
+			resp.sendRedirect("reviewer.jsp");
 		}
-		
-
 	}
-
 }

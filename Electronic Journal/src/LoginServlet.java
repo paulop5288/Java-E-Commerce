@@ -37,7 +37,30 @@ public class LoginServlet extends HttpServlet {
 		}
 
 		if (isAuthor) {
-			// for author
+			if (user.isMatched()) {
+				// Start session management here
+				HttpSession session = req.getSession();
+				session.setAttribute("username", username);
+				session.setMaxInactiveInterval(5*60); // 5 min
+				session.setAttribute("role", "author");
+
+				res.setContentType("text/html");
+				Cookie userName = new Cookie("username", username);
+				userName.setMaxAge(5*60);
+				res.addCookie(userName);
+				res.setContentType("text/html");
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert(\"You have logged in.\");");
+				out.println("window.location = 'author.jsp';");
+				out.println("</script>");
+
+			} else {
+				res.setContentType("text/html");
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert(\"Username/password doesn't match.\");");
+				out.println("window.location = 'author.jsp';");
+				out.println("</script>");
+			}
 		} else {
 			
 			if (user.isMatched() && SelectReview.isReviewer(user.getID())) {
