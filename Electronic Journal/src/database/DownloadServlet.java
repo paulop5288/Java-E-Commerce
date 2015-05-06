@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,118 +14,136 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DownloadServlet extends HttpServlet {
 
-	private String dbServer = "jdbc:mysql://stusql.dcs.shef.ac.uk/";
-	private String dbName = "team158";
-	private String dbUsername = "team158";
-	private String dbPassword = "9a5b309d";
-
-	private boolean fileExist = false;
-	private String username = "";
+	private String role = "", callbackURL = "", filePath = null;
+	private int articleID = 0;
+	private boolean allowDownload = false;
+	
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		System.out.println("start download");
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.err.println("fail to load driver.");
-		}
-		int articleID = Integer.parseInt(req.getParameter("articleID"));
-		int reviewerID = Integer.parseInt(req.getParameter("reviewerID"));
-		String fileQuery = "SELECT article_file FROM article where articleID = ?";
-		String checkQuery = "SELECT status FROM article_selection WHERE review_Article_ID = ? AND reviewerID = ?;";
-		String updateSelection = "UPDATE article_selection SET "
-				+ "status = ? WHERE reviewerID = ? AND review_Article_ID = ?; ";
-		String updateArticle = "UPDATE article set no_reviewer = no_reviewer + 1 where"
-				+ " article.articleID = ?;";
-		String updateReviewform = "INSERT INTO review (reviewID,reviewerID,articleID) VALUES"
-				+ " (null,?,?);";
+		resp.setContentType("text/html");
 		
-		Connection dbCon = null;
+		
+		// get parameters
+		role = req.getParameter("role");
+		articleID = Integer.parseInt(req.getParameter("articleID"));
+
+		// setup database
+		DBConnection dbCon = new DBConnection();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
-		String fileName = "";
-		// \export\tomtemp\
-		String filePath = "\\export\\tomtemp\\";
-		String fileType = "APPLICATION/PDF";
+
 		try {
-			// Get connection to team database
-			dbCon = DriverManager.getConnection(dbServer + dbName, dbUsername,
-					dbPassword);
-			pstmt = dbCon.prepareStatement(fileQuery);
-			pstmt.setInt(1, articleID);
-			resultSet = pstmt.executeQuery();
-			if (resultSet.next()) {
-				fileName = resultSet.getString("article_file");
-				System.out.println(fileName);
-				pstmt = dbCon.prepareStatement(checkQuery);
+			switch (role) {
+			case "reviewer":
+				String status = "";
+				int reviewerID = Integer.parseInt(req
+						.getParameter("reviewerID"));
+				String checkQuery = "SELECT status FROM article_selection WHERE review_Article_ID = ? AND reviewerID = ?;";
+				String updateSelection = "UPDATE article_selection SET "
+						+ "status = ? WHERE reviewerID = ? AND review_Article_ID = ?; ";
+				String updateArticle = "UPDATE article set no_reviewer = no_reviewer + 1 where"
+						+ " article.articleID = ?;";
+				String updateReviewform = "INSERT INTO review (reviewID,reviewerID,articleID) VALUES"
+						+ " (null,?,?);";
+				// check status
+
+				pstmt = dbCon.createPreparedStatement(checkQuery);
+
 				pstmt.setInt(1, articleID);
 				pstmt.setInt(2, reviewerID);
+				resultSet = dbCon.executeQuery(pstmt);
+				if (resultSet.next()) {
+					status = resultSet.getString("status");
+				}
+				if (status.equalsIgnoreCase("selected")) {
+					// update article_selection
+					pstmt = dbCon.createPreparedStatement(updateSelection);
+					pstmt.setString(1, "downloaded");
+					pstmt.setInt(2, reviewerID);
+					pstmt.setInt(3, articleID);
+					int updateResult = pstmt.executeUpdate();
+
+					// update article
+					pstmt = dbCon.createPreparedStatement(updateArticle);
+					pstmt.setInt(1, articleID);
+					updateResult = pstmt.executeUpdate();
+
+					// update reviewform
+					pstmt = dbCon.createPreparedStatement(updateReviewform);
+					pstmt.setInt(1, reviewerID);
+					pstmt.setInt(2, articleID);
+					updateResult = pstmt.executeUpdate();
+
+					allowDownload = true;
+				} else if (status.equalsIgnoreCase("downloaded")) {
+					allowDownload = true;
+				} else {
+					allowDownload = false;
+					PrintWriter out = resp.getWriter();
+					out = resp.getWriter();
+					resp.setContentType("text/html");
+					out.println("<script type=\"text/javascript\">");
+					out.println("alert(\"You have submitted the review.\");");
+					out.println("window.location = 'review/myreview.jsp';");
+					out.println("</script>");
+				}
+				break;
+			case "editor":
+				allowDownload = true;
+				break;
+			case "reader":
+				allowDownload = true;
+				break;
+			default:
+				break;
+			}
+
+			if (allowDownload) {
+				String downloadQuery = "SELECT article_file FROM article WHERE articleID = ?; ";
+				pstmt = dbCon.createPreparedStatement(downloadQuery);
+				pstmt.setInt(1, articleID);
 				resultSet = pstmt.executeQuery();
 				if (resultSet.next()) {
-					String status = resultSet.getString("status");
-					if (status.equalsIgnoreCase("downloaded")) {
-						// start downloaded
-					} else if (status.equalsIgnoreCase("selected")){
-						// update article
-						pstmt = dbCon.prepareStatement(updateArticle);
-						pstmt.setInt(1, articleID);
-						int result = pstmt.executeUpdate();
-						System.out.println(result);
-						
-						// update article_selection
-						pstmt = dbCon.prepareStatement(updateSelection);
-						pstmt.setString(1, "downloaded");
-						pstmt.setInt(2, reviewerID);
-						pstmt.setInt(3, articleID);
-						result = pstmt.executeUpdate();
-						System.out.println(result);
-						
-						// update review form
-						pstmt = dbCon.prepareStatement(updateReviewform);
-						pstmt.setInt(1, reviewerID);
-						pstmt.setInt(2, articleID);
-						result = pstmt.executeUpdate();
-						System.out.println(result);
-						
-					} else {
-						PrintWriter out = resp.getWriter();
-						resp.setContentType("text/html");
-						out.println("<script type=\"text/javascript\">");
-						out.println("alert(\"You have submitted your review.\");");
-						out.println("window.location = './myreview.jsp';");
-						out.println("</script>");
-					}
+					filePath = resultSet.getString("article_file");
+				}
+				
+				if (filePath != null) {
+					String fileType = "application/pdf";
+					String tempPath = "C:/Users/Paul/Desktop/Assignment2014-15.pdf";
+					String fileName = tempPath.substring(tempPath.lastIndexOf("/") + 1);
+			         // Find this file id in database to get file name, and file type
+
+			         // You must tell the browser the file type you are going to send
+			         // for example application/pdf, text/plain, text/html, image/jpg
+			         resp.setContentType(fileType);
+
+			         // Make sure to show the download dialog
+			         resp.setHeader("Content-disposition","attachment; filename="+fileName);
+
+			         // Assume file name is retrieved from database
+			         // For example D:\\file\\test.pdf
+
+			         File my_file = new File(tempPath);
+
+			         // This should send the file to browser
+			         OutputStream stream = resp.getOutputStream();
+			         FileInputStream in = new FileInputStream(my_file);
+			         byte[] buffer = new byte[4096];
+			         int length;
+			         while ((length = in.read(buffer)) > 0){
+			        	 stream.write(buffer, 0, length);
+			         }
+			         in.close();
+			         stream.flush();
 				}
 			}
-		} catch (Exception e) {
-			System.out.println("There is an exception.");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
-		/*
-		 * // Find this file id in database to get file name, and file type
-		 * 
-		 * // You must tell the browser the file type you are going to send //
-		 * for example application/pdf, text/plain, text/html, image/jpg
-		 * resp.setContentType(fileType);
-		 * 
-		 * // Make sure to show the download dialog
-		 * resp.setHeader("Content-Disposition", "inline; filename=\"" +
-		 * fileName + "\"");
-		 * 
-		 * // Assume file name is retrieved from database // For example
-		 * D:\\file\\test.pdf
-		 * 
-		 * File my_file = new File(filePath + fileName);
-		 * 
-		 * // This should send the file to browser OutputStream out =
-		 * resp.getOutputStream(); FileInputStream in = new
-		 * FileInputStream(my_file); byte[] buffer = new byte[4096]; int length;
-		 * while ((length = in.read(buffer)) > 0) { out.write(buffer, 0,
-		 * length); } in.close(); out.flush();
-		 */
-		resp.sendRedirect("myreview.jsp");
+		System.out.println(filePath);
 	}
 
 	public DownloadServlet() {
