@@ -30,9 +30,10 @@
 		<div id="rightdiv">
 			<%
 				//allow access only if session exists
-				if (session.getAttribute("username") != null
-						&& session.getAttribute("role") != null) {
-					response.sendRedirect("selectreview.jsp");
+				String username = (String) session.getAttribute("username");
+				String role = (String)session.getAttribute("role");
+				if (username != null && role != null && role.equalsIgnoreCase("reviewer")) {
+					response.sendRedirect("review/selectreview.jsp");
 				}
 			%>
 			<div id="login">

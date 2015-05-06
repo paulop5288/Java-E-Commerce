@@ -6,7 +6,7 @@
 	content="text/html; charset=windows-1252">
 
 <title>Team8 - E-Journal Site</title>
-<link rel="stylesheet" type="text/css" href="major.css">
+<link rel="stylesheet" type="text/css" href="../major.css">
 </head>
 <body>
 	<%@ page import="java.util.Date"%>
@@ -15,28 +15,18 @@
 	<%@ page import="database.*"%>
 	<%
 		//allow access only if session exists
-		String user = null;
-		
-		if (session.getAttribute("username") == null) {
-			response.sendRedirect("/../reviewer.jsp");
+		String username = (String) session.getAttribute("username");
+		String role = (String)session.getAttribute("role");
+		User reviewer = null;
+		if (username == null || role == null) {
+			response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+			return;
 		} else {
-			user = (String) session.getAttribute("username");
-		}
-		String username = null;
-		String sessionID = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("username"))
-					username = cookie.getValue();
-				if (cookie.getName().equals("JSESSIONID"))
-					sessionID = cookie.getValue();
+			reviewer = new User(username, "");
+			if (!SelectReview.isReviewer(reviewer.getID())) {
+				response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+				return;
 			}
-		}
-		User reviewer = new User(user, "");
-		if (!SelectReview.isReviewer(reviewer.getID())) {
-			session.invalidate();
-			response.sendRedirect("/../reviewer.jsp");
 		}
 	%>
 	<div id="banner">
@@ -47,12 +37,8 @@
 		<li><a
 			href="http://stucat.dcs.shef.ac.uk:8080/stucat008/index.jsp">
 				Home</a></li>
-		<li><a
-			href="./myreview.jsp">
-				My Reviews</a></li>
-		<li><a
-			href="./reviewform.jsp">
-				Submit Review</a></li>
+		<li><a href="./myreview.jsp"> My Reviews</a></li>
+		<li><a href="./reviewform.jsp"> Submit Review</a></li>
 	</div>
 	<div id="maincontent">
 		<div id="rightdiv">
@@ -60,8 +46,7 @@
 				<fieldset>
 					<legend>Logout</legend>
 					<p>
-						Hi,
-						<%=user%></p>
+						Hi,<%= reviewer.getFirstName() + " " + reviewer.getLastName()%></p>
 					<form
 						action="http://localhost:8080/Electronic%20Journal/logout.html"
 						method="post">

@@ -8,7 +8,7 @@
 	content="text/html; charset=windows-1252">
 
 <title>Team8 - E-Journal Site</title>
-<link rel="stylesheet" type="text/css" href="major.css">
+<link rel="stylesheet" type="text/css" href="../major.css">
 </head>
 <body>
 	<%@ page import="java.util.Date"%>
@@ -16,29 +16,20 @@
 	<%@ page import="review.*"%>
 	<%@ page import="database.*"%>
 	<%
-		//allow access only if session exists
-		String user = null;
-		if (session.getAttribute("username") == null) {
-			response.sendRedirect("reviewer.jsp");
-		} else {
-			user = (String) session.getAttribute("username");
-		}
-		String username = null;
-		String sessionID = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("username"))
-					username = cookie.getValue();
-				if (cookie.getName().equals("JSESSIONID"))
-					sessionID = cookie.getValue();
-			}
-		}
-		User reviewer = new User(user, "");
+	//allow access only if session exists
+	String username = (String) session.getAttribute("username");
+	String role = (String)session.getAttribute("role");
+	User reviewer = null;
+	if (username == null || role == null) {
+		response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+		return;
+	} else {
+		reviewer = new User(username, "");
 		if (!SelectReview.isReviewer(reviewer.getID())) {
-			session.invalidate();
-			response.sendRedirect("reviewer.jsp");
+			response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+			return;
 		}
+	}
 	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
@@ -58,7 +49,7 @@
 					<legend>Logout</legend>
 					<p>
 						Hi,
-						<%=user%></p>
+						<%=username%></p>
 					<form
 						action="http://localhost:8080/Electronic%20Journal/logout.html"
 						method="post">
@@ -80,49 +71,51 @@
 						<th></th>
 						<th></th>
 					</tr>
-					<% List<Selection> selections = Selection.getSelectedArticles(reviewer.getID()); 
-					int count = 1;
-					for (Selection selection : selections) {
-						 %>
+					<%
+						List<Selection> selections = Selection.getSelectedArticles(reviewer.getID()); 
+											int count = 1;
+											for (Selection selection : selections) {
+					%>
 
 					<tr>
-						<form action="download.html" method="post">
-						<td><%= count %></td>
-						<td><%= selection.getTitle() %></td>
-						<td><%= selection.getStatus() %></td>
-						<td><input type="hidden" name="articleID"
-							value=<%= selection.getArticleID() %>> <input
-							type="hidden" name="reviewerID" value=<%= reviewer.getID() %>>
-							<input type="submit" value="download"></td>
+						<form action="../download.html" method="post">
+							<td><%=count%></td>
+							<td><%=selection.getTitle()%></td>
+							<td><%=selection.getStatus()%></td>
+							<td><input type="hidden" name="articleID"
+								value=<%=selection.getArticleID()%>> <input
+								type="hidden" name="reviewerID" value=<%=reviewer.getID()%>>
+								<input type="hidden" name="role" value="reviewer"> <input
+								type="submit" value="download"></td>
 						</form>
 
 
 						<%
-						if (selection.getStatus().equalsIgnoreCase("selected")) {
-							%>
+							if (selection.getStatus().equalsIgnoreCase("selected")) {
+						%>
 						<form action="cancelselection.html" method="post">
-						<td><input type="submit" value="cancel"> <input
-							type="hidden" name="articleID"
-							value=<%= selection.getArticleID() %>> <input
-							type="hidden" name="reviewerID" value=<%= reviewer.getID() %>>
-						</td>
+							<td><input type="submit" value="cancel"> <input
+								type="hidden" name="articleID"
+								value=<%=selection.getArticleID()%>> <input
+								type="hidden" name="reviewerID" value=<%=reviewer.getID()%>>
+							</td>
 						</form>
-						<% 
-						} else if (selection.getStatus().equalsIgnoreCase("reviewed")){
-							%>
+						<%
+							} else if (selection.getStatus().equalsIgnoreCase("reviewed")){
+						%>
 						<td>reviewed</td>
 						<%
-						} else {
-							%>
-							<td>reviewing</td>
-							<%
-						}
+							} else {
+						%>
+						<td>reviewing</td>
+						<%
+							}
 						%>
 
 					</tr>
 					<%
-						 count++;
-					}
+						count++;
+											}
 					%>
 				</table>
 
@@ -147,12 +140,12 @@
 	<!-- Footer Section -->
 	<hr>
 	<div id="footer">© Team8 2015</div>
+
 </body>
 </html>
 <script type="text/javascript">
-function readAbstract(p1) {
-	var text = document.getElementById(p1);
-	alert("article abstract : \n\n" + text.innerHTML);
-}
-
+	function readAbstract(p1) {
+		var text = document.getElementById(p1);
+		alert("article abstract : \n\n" + text.innerHTML);
+	}
 </script>

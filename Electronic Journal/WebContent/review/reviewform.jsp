@@ -3,12 +3,10 @@
 <html>
 <head>
 <title>Team8 - E-Journal Site</title>
-<link rel="stylesheet" type="text/css"
-	href="major.css">
+<link rel="stylesheet" type="text/css" href="../major.css">
 <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 <meta http-equiv="description" content="my first page">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<!--<link rel="stylesheet" type="text/css" href="/major.css">-->
 </head>
 
 <body>
@@ -16,33 +14,24 @@
 		<h1>International Journal of Software Engineering</h1>
 	</div>
 	<%@ page import="java.util.Date"%>
-	<%@ page import="java.util.List" %>
-	<%@ page import="review.*" %>
-	<%@ page import="database.*" %>
+	<%@ page import="java.util.List"%>
+	<%@ page import="review.*"%>
+	<%@ page import="database.*"%>
 	<%
-		//allow access only if session exists
-		String user = null;
-		if (session.getAttribute("username") == null) {
-			response.sendRedirect("reviewer.jsp");
-		} else {
-			user = (String) session.getAttribute("username");
-		}
-		String username = null;
-		String sessionID = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("username"))
-					username = cookie.getValue();
-				if (cookie.getName().equals("JSESSIONID"))
-					sessionID = cookie.getValue();
-			}
-		}
-		User reviewer = new User(user, "");
+	//allow access only if session exists
+	String username = (String) session.getAttribute("username");
+	String role = (String)session.getAttribute("role");
+	User reviewer = null;
+	if (username == null || role == null) {
+		response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+		return;
+	} else {
+		reviewer = new User(username, "");
 		if (!SelectReview.isReviewer(reviewer.getID())) {
-			session.invalidate();
-			response.sendRedirect("reviewer.jsp");
+			response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+			return;
 		}
+	}
 	%>
 	<p><%= new Date() %></p>
 
@@ -59,43 +48,38 @@
 		<legend>Review Form</legend>
 		<form method="post"
 			action="http://localhost:8080/Electronic%20Journal/submitreview.html">
-		<select name="article">
-		<option id="0" value="Select">Please select</option>
-		<%	List<Article> articles = SubmitReview.getDownloadedArticles(reviewer.getID());
+			<select name="article">
+				<option id="0" value="Select">Please select</option>
+				<%	List<Article> articles = SubmitReview.getDownloadedArticles(reviewer.getID());
 		int count = 1;
 		for (Article article : articles) {
 			%>
-			<option id=<%= count %> value=<%= article.getArticleIDString() %>><%= article.getTitle() %></option>
-			<%
+				<option id=<%= count %> value=<%= article.getArticleIDString() %>><%= article.getTitle() %></option>
+				<%
 			count++;
 		}
 		%>
-		</select> 
-		<br>
-		Please choose your expertise level <br><br>
-			<input type="radio" name="level" value="expert">Expert <input
-				type="radio" name="level" value="knowledgeable">Knoweledgeable
-			<input type="radio" name="level" value="outsider">Outsider <br><br>
-			Please give your opinion about this article<br><br>
-			<input type="radio" name="score" value="champion">champion <input
-				type="radio" name="score" value="favourable">favourable
-			<input type="radio" name="score" value="indifferent">indifferent <br>
-			<input type="radio" name="score" value="indifferent">detractor <br>
-			<br> Please write a summary of the article <br>
-			<br> Abstract <br>
+			</select> <br> Please choose your expertise level <br>
+			<br> <input type="radio" name="level" value="expert">Expert
+			<input type="radio" name="level" value="knowledgeable">Knoweledgeable
+			<input type="radio" name="level" value="outsider">Outsider <br>
+			<br> Please give your opinion about this article<br>
+			<br> <input type="radio" name="score" value="champion">champion
+			<input type="radio" name="score" value="favourable">favourable
+			<input type="radio" name="score" value="indifferent">indifferent
+			<br> <input type="radio" name="score" value="indifferent">detractor
+			<br> <br> Please write a summary of the article <br> <br>
+			Abstract <br>
 			<textarea rows="15" cols="100" name="abstract"></textarea>
-			<br>
-			<br> Please write the novel contribution of the article<br>
+			<br> <br> Please write the novel contribution of the
+			article<br>
 			<textarea rows="15" cols="100" name="contribution"></textarea>
-			<br>
-			<br> Please write all the bad points<br>
+			<br> <br> Please write all the bad points<br>
 			<textarea rows="2" cols="100" name="badpoint"></textarea>
-			<br>
-			<br> Other errors (For editor)<br>
+			<br> <br> Other errors (For editor)<br>
 			<textarea rows="15" cols="100" name="error"></textarea>
-			<br>
-			<br> <input type="submit" value="Submit">
-			<input type="hidden" name="reviewer" value=<%= reviewer.getID() %>>
+			<br> <br> <input type="submit" value="Submit"> <input
+				type="hidden" name="reviewer" value=<%= reviewer.getID() %>>
 		</form>
 	</fieldset>
 </body>
