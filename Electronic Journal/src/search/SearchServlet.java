@@ -14,6 +14,7 @@ import database.DBConnection;
 import java.sql.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -24,6 +25,12 @@ public class SearchServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.sendRedirect(req.getContextPath() + "/index.jsp");
+	}
+	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
@@ -31,18 +38,27 @@ public class SearchServlet extends HttpServlet {
 		searchOption = req.getParameter("searchOpt");
 		searchTerm = req.getParameter("searchTerm");
 		System.out.println(searchOption + searchTerm);
-
+		
+		List<SearchResult> searchResults = new ArrayList<SearchResult>();
+		
+		boolean isYear = false;
 		res.setContentType("text/html");
 		PrintWriter out = res.getWriter();
-		String searchByTitleQuery = "select article.title from article"
-				+ " where article.publication_id is Not NULL "
-				+ "and where article.title LIKE '%" + searchTerm
-				+ "%' OR title LIKE '" + searchTerm + "%' OR title LIKE '%"
-				+ searchTerm + "'";
-		String searchByKeywordQuery = "";
-		String searchByYearQuery = "";
-		String searchAllQuery = "select title.*";
 
+		if (searchOption.equalsIgnoreCase("year")) {
+			try {
+				Integer.parseUnsignedInt(searchTerm);
+				if (searchTerm.length() != 4) {
+					isYear = false;
+				} else {
+					isYear = true;
+				}
+			} catch (NumberFormatException e) {
+				isYear = false;
+			}
+		}
+		
+		
 		// query database
 		DBConnection dbConnection = new DBConnection();
 		ResultSet resultSet = null;
@@ -51,31 +67,49 @@ public class SearchServlet extends HttpServlet {
 			switch (searchOption) {
 			case "article":
 				System.out.println(searchOption);
+				searchQuery = this.getSearchByTitleQuery();
+				pstm = dbConnection.createPreparedStatement(searchQuery);
+				pstm.setString(1, "%" + searchTerm + "%");
 				break;
 
 			case "author":
 				System.out.println(searchOption);
 				searchQuery = this.getSearchByAuthorQuery();
 				pstm = dbConnection.createPreparedStatement(searchQuery);
-				pstm.setString(1, searchTerm);
-				pstm.setString(2, searchTerm);
-				pstm.setString(3, searchTerm);
-				resultSet = dbConnection.executeQuery(pstm);
+				pstm.setString(1, "%" + searchTerm + "%");
+				pstm.setString(2, "%" + searchTerm + "%");
+				pstm.setString(3, "%" + searchTerm + "%");
 				break;
 
 			case "year":
-				System.out.println(searchOption);
+				if (isYear) {
+					System.out.println(searchOption);
+					searchQuery = this.getSearchByDateQuery();
+					pstm = dbConnection.createPreparedStatement(searchQuery);
+					pstm.setString(1, searchTerm + "-01-01");
+					pstm.setString(2, searchTerm + "-12-31");
+				} else {
+					res.sendRedirect(req.getContextPath() + "/noresult.jsp");
+					return;
+				}
+				
 				break;
 
 			case "keyword":
 				System.out.println(searchOption);
+				searchQuery = this.getSearchByKeywordsQuery();
+				pstm = dbConnection.createPreparedStatement(searchQuery);
+				pstm.setString(1, "%" + searchTerm + "%");
 				break;
 
 			default:
+				searchQuery = this.getAllQuery();
+				pstm = dbConnection.createPreparedStatement(searchQuery);
 				break;
 			}
+			resultSet = pstm.executeQuery();
 		// output query result 
-			if (resultSet != null && resultSet.next()) {
+			while (resultSet != null && resultSet.next()) {
 				
 				title = resultSet.getString("title");
 				articleAbstract = resultSet.getString("abstract");
@@ -85,21 +119,9 @@ public class SearchServlet extends HttpServlet {
 				authorEmail = resultSet.getString("username");
 				keywords = resultSet.getString("keywords");
 				// to page
-				out.print("<hr><br><td><h3>" + "The title is: "
-						+ title + "</h3></td>");
-
-				out.print(" <h4>" + "The summary:</h4>" + "<td>"
-						+ articleAbstract);
-				out.print("<br><td> <a href ="
-						+ articlePath
-						+ ">Clik here</a> to download the PDF of the full article</td>");
-				out.print(" <br><br><h4>About the author(s):</h4><br> Name(s): "
-						+ "<td> " + authorName + "  </td> <br><td>      "
-						+ " the keywords :" + keywords
-						+ "</td><br><td> Email address:"
-						+ authorEmail + " </td>");
-
-				out.print("<br><td> <a href ='temp.jsp'>Back</a>");
+				searchResults.add(new SearchResult(title, authorName, 
+						articleAbstract, articlePath, OtherAuthors, 
+						authorEmail, keywords));
 	
 			}
 			
@@ -123,12 +145,42 @@ public class SearchServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}	
+		System.out.println(searchResults.size());
+		req.setAttribute("results", searchResults);
+		req.setAttribute("search", "search");
+		req.getRequestDispatcher("search.jsp").forward(req, res);
+		
 	}
 	
 	private String getSearchByAuthorQuery() {
 		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
 				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
-				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE A.firstName "
-				+ "LIKE ? OR A.lastName LIKE ? OR B.Other_authors LIKE ?;";
+				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE (A.firstName "
+				+ "LIKE ? OR A.lastName LIKE ? OR B.Other_authors LIKE ?) AND "
+				+ "B.publication_id IS NOT NULL;";
+	}
+	private String getSearchByKeywordsQuery() {
+		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
+				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE B.keywords "
+				+ "LIKE ? AND B.publication_id IS NOT NULL;";
+	}
+	private String getSearchByDateQuery() {
+		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
+				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
+				+ "(publicationDate BETWEEN ? AND ?) AND B.publication_id IS NOT NULL;";
+	}
+	private String getSearchByTitleQuery() {
+		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
+				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
+				+ "B.title LIKE ? AND B.publication_id IS NOT NULL;";
+	}
+	private String getAllQuery() {
+		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
+				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
+				+ "B.publication_id IS NOT NULL;";
 	}
 }

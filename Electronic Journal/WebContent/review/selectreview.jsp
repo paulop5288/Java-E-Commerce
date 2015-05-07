@@ -61,7 +61,7 @@
 		<id="leftdiv">
 		<div id="select">
 			<%
-				if (!SelectReview.checkNumberOfReview(reviewer.getID())) {
+				if (!SelectReview.checkNumberOfReview(SelectReview.getUnpaidArticleID(reviewer.getID()))) {
 			%>
 			<p>
 				You have selected 3 articles for review.<br> Please submit your

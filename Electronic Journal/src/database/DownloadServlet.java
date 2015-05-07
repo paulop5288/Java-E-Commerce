@@ -112,8 +112,7 @@ public class DownloadServlet extends HttpServlet {
 				
 				if (filePath != null) {
 					String fileType = "application/pdf";
-					String tempPath = "C:/Users/Paul/Desktop/Assignment2014-15.pdf";
-					String fileName = tempPath.substring(tempPath.lastIndexOf("/") + 1);
+					String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
 			         // Find this file id in database to get file name, and file type
 
 			         // You must tell the browser the file type you are going to send
@@ -126,7 +125,7 @@ public class DownloadServlet extends HttpServlet {
 			         // Assume file name is retrieved from database
 			         // For example D:\\file\\test.pdf
 
-			         File my_file = new File(tempPath);
+			         File my_file = new File(filePath);
 
 			         // This should send the file to browser
 			         OutputStream stream = resp.getOutputStream();

@@ -13,15 +13,6 @@
 	<%@ page import="review.*"%>
 	<%@ page import="database.*"%>
 	<%@ page import="search.*"%>
-	<% 
-	ArrayList<SearchResult> results = (ArrayList<SearchResult>)request.getAttribute("results");
-	String key = (String)request.getAttribute("search");
-	if (key == null || results == null) {
-		response.sendRedirect(request.getContextPath() + "/index.jsp");
-		return;
-	}
-	
-	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
 	</div>
@@ -38,48 +29,7 @@
 				Change Password </a></li>
 	</div>
 	<div id="maincontent">
-		<div id="leftdiv">
-		<%
-		if (results.size() != 0) {
-			int i = 1;
-			%>
-			<div id="result">
-				<table style="width: 100%">
-					<tr>
-						<th>No.</th>
-						<th>title</th>
-						<th>author</th>
-					</tr>
-			<%
-			for (SearchResult result : results) {
-				%>
-				<tr>
-						<th><%= i %></th>
-						<th><%= result.getTitle() %></th>
-						<th><%= result.getAuthorName() %></th>
-				</tr>
-				<%
-				i++;
-			}
-			%>
-			</table>
-			</div>
-			<%
-
-			
-		} else {
-			response.sendRedirect(request.getContextPath() + "/noresult.jsp");
-			return;
-		}
-		
-		
-		
-		%>
-		
-		
-		
-		</div>
-		<!--End of left div -->
+		<center><h1>no matched result found!</h1></center>
 	</div>
 	<!-- End of Main content -->
 

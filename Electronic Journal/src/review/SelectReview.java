@@ -96,10 +96,12 @@ public class SelectReview extends HttpServlet {
 				+ "AND article.authorID != ? AND article.passed_review + article.no_reviewer <= 5;";
 		try {
 
-			if (SelectReview.checkNumberOfReview(reviewerID)) {
+			if (SelectReview.checkNumberOfReview(SelectReview.getUnpaidArticleID(reviewerID))) {
+				System.out.println(SelectReview.getUnpaidArticleID(reviewerID));
 				pstm = dbConnection.createPreparedStatement(getArticleQuery);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, reviewerID);
+				System.out.println(pstm);
 				resultSet = dbConnection.executeQuery(pstm);
 				for (int i = 0; i < 5; i++) {
 					if (resultSet.next()) {
@@ -138,18 +140,19 @@ public class SelectReview extends HttpServlet {
 		return articles;
 	}
 
-	public static boolean checkNumberOfReview(int reviewerID) {
-		String checkReviewQuery = "SELECT COUNT(review.reviewID) from review where review.reviewerID = ?;";
+	public static boolean checkNumberOfReview(int unpaidArticleID) {
+		String checkReviewQuery = "SELECT COUNT(reviewerID) from article_selection where submitted_Article_ID = ? AND status != \"selected\";";
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
 		try {
 			pstm = dbConnection.createPreparedStatement(checkReviewQuery);
-			pstm.setInt(1, reviewerID);
-			resultSet = dbConnection.executeQuery(pstm);
+			pstm.setInt(1, unpaidArticleID);
+			System.out.println(pstm);
+			resultSet = pstm.executeQuery();
 			int count = 0;
 			if (resultSet.next()) {
-				count = resultSet.getInt("COUNT(review.reviewID)");
+				count = resultSet.getInt("COUNT(reviewerID)");
 			}
 			if (count < 3) {
 				return true;
