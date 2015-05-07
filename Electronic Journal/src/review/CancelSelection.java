@@ -56,6 +56,23 @@ public class CancelSelection extends HttpServlet {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			try {
+				if (pstm != null) {
+					pstm.close();
+				}
+			
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (resultSet != null) {
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

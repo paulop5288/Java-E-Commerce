@@ -50,6 +50,7 @@ public class SubmitReview extends HttpServlet {
 		
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
 		try {
 			//update review table
 			pstm = dbConnection.createPreparedStatement("UPDATE review SET"
@@ -91,7 +92,7 @@ public class SubmitReview extends HttpServlet {
 						+ "AND status = \"reviewed\";");
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, articleID);
-				ResultSet resultSet = pstm.executeQuery();
+				resultSet = pstm.executeQuery();
 				int reviewer_Article_ID = 0;
 				int count = 0;
 				if (resultSet.next()) {
@@ -119,6 +120,23 @@ public class SubmitReview extends HttpServlet {
 			dbConnection.closeConnection();			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			try {
+				if (pstm != null) {
+					pstm.close();
+				}
+			
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (resultSet != null) {
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

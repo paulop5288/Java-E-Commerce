@@ -31,6 +31,7 @@ public class SelectReview extends HttpServlet {
 			
 			DBConnection dbConnection = new DBConnection();
 			PreparedStatement pstm = null;
+			ResultSet resultSet = null;
 			String query = "INSERT INTO article_selection (submitted_Article_ID,review_Article_ID,reviewerID,reviewformID,status) VALUES "
 					+ "(?,?,?,NULL,?);";
 			// String updateArticle =
@@ -52,6 +53,23 @@ public class SelectReview extends HttpServlet {
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
+				} finally {
+					dbConnection.closeConnection();
+					try {
+						if (pstm != null) {
+							pstm.close();
+						}
+					
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					try {
+						if (resultSet != null) {
+							resultSet.close();
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			resp.setContentType("text/html");
@@ -69,6 +87,7 @@ public class SelectReview extends HttpServlet {
 	public static List<Article> getArticlesForReview(int reviewerID) {
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
 		List<Article> articles = new ArrayList<Article>();
 		String getArticleQuery = "SELECT article.articleID, article.authorID, article.title,"
 				+ " article.abstract FROM article WHERE article.articleID NOT IN "
@@ -81,7 +100,7 @@ public class SelectReview extends HttpServlet {
 				pstm = dbConnection.createPreparedStatement(getArticleQuery);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, reviewerID);
-				ResultSet resultSet = dbConnection.executeQuery(pstm);
+				resultSet = dbConnection.executeQuery(pstm);
 				for (int i = 0; i < 5; i++) {
 					if (resultSet.next()) {
 						int articleID = resultSet.getInt("articleID");
@@ -98,6 +117,23 @@ public class SelectReview extends HttpServlet {
 			dbConnection.closeConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			dbConnection.closeConnection();
+			try {
+				if (pstm != null) {
+					pstm.close();
+				}
+			
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (resultSet != null) {
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return articles;
 	}
@@ -106,10 +142,11 @@ public class SelectReview extends HttpServlet {
 		String checkReviewQuery = "SELECT COUNT(review.reviewID) from review where review.reviewerID = ?;";
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
+		ResultSet resultSet = null;
 		try {
 			pstm = dbConnection.createPreparedStatement(checkReviewQuery);
 			pstm.setInt(1, reviewerID);
-			ResultSet resultSet = dbConnection.executeQuery(pstm);
+			resultSet = dbConnection.executeQuery(pstm);
 			int count = 0;
 			if (resultSet.next()) {
 				count = resultSet.getInt("COUNT(review.reviewID)");
@@ -119,6 +156,23 @@ public class SelectReview extends HttpServlet {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}  finally {
+			dbConnection.closeConnection();
+			try {
+				if (pstm != null) {
+					pstm.close();
+				}
+			
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (resultSet != null) {
+					resultSet.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return false;
