@@ -72,11 +72,11 @@ public class EditorLoginServlet extends HttpServlet {
  			res.setContentType("text/html"); 
  			PrintWriter out = res.getWriter(); 
  			out.println("<html><body>"); 
- 			out.println("Hello " + title + "." + surname + ", welcome " 
+ 			out.println("Hello " + surname + ", welcome to IJSE" 
  					); 
  			out.println("</body></html>"); 
  			System.out.println("sucessful."); 
- 			res.sendRedirect("editor.jsp");
+ 			res.sendRedirect("/stucat008/editor/editor.jsp");
  		} else { 
  			res.setContentType("text/html"); 
 			PrintWriter out = res.getWriter(); 			out.println("<html><body>"); 

@@ -7,7 +7,7 @@ import javax.servlet.http.*;
 import java.sql.*;
 
 public class RetireEditor extends HttpServlet {
-	private String message="",email="",username="",password="";
+	private String message="",username="",password="";
 	Connection con = null;
 	Statement stmt = null;
 	ResultSet resultSet = null;
@@ -25,7 +25,7 @@ public class RetireEditor extends HttpServlet {
 		out = res.getWriter();
 		username = req.getParameter("username");
 		password = req.getParameter("password");
-		if (email.trim().compareTo("") == 0) {
+		if (username.trim().compareTo("") == 0) {
 			message="Username cannot be empty.</body></html>";
 			out.println(message);
 			return;
@@ -169,7 +169,7 @@ public class RetireEditor extends HttpServlet {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://stusql.dcs.shef.ac.uk/team158", "team158",
 					"9a5b309d");
-			String query = "UPDATE editor set status='inactive' WHERE username ='" + email + "'";
+			String query = "UPDATE editor set status='inactive' WHERE username ='" + username + "'";
 			stmt = con.createStatement();
 			int count=0;
 			count = stmt.executeUpdate(query);
