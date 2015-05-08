@@ -74,6 +74,13 @@ public class SelectReview extends HttpServlet {
 			}
 			resp.setContentType("text/html");
 			resp.sendRedirect("myreview.jsp");
+		} else if (articleIDs == null) {
+			PrintWriter out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please select your review.\");");
+			out.println("window.location = 'selectreview.jsp';");
+			out.println("</script>");
 		} else {
 			PrintWriter out = resp.getWriter();
 			resp.setContentType("text/html");
@@ -97,11 +104,9 @@ public class SelectReview extends HttpServlet {
 		try {
 
 			if (SelectReview.checkNumberOfReview(SelectReview.getUnpaidArticleID(reviewerID))) {
-				System.out.println(SelectReview.getUnpaidArticleID(reviewerID));
 				pstm = dbConnection.createPreparedStatement(getArticleQuery);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, reviewerID);
-				System.out.println(pstm);
 				resultSet = dbConnection.executeQuery(pstm);
 				for (int i = 0; i < 5; i++) {
 					if (resultSet.next()) {
@@ -148,7 +153,6 @@ public class SelectReview extends HttpServlet {
 		try {
 			pstm = dbConnection.createPreparedStatement(checkReviewQuery);
 			pstm.setInt(1, unpaidArticleID);
-			System.out.println(pstm);
 			resultSet = pstm.executeQuery();
 			int count = 0;
 			if (resultSet.next()) {
