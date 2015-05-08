@@ -21,6 +21,7 @@ public class SearchServlet extends HttpServlet {
 	private String searchOption = "", searchTerm = "", searchQuery = "";
 	private String title = "", articleAbstract = "", articlePath = "", authorName = "";
 	private String OtherAuthors = "", authorEmail = "", keywords = "";
+	private int articleID = 0;
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -107,22 +108,17 @@ public class SearchServlet extends HttpServlet {
 				pstm = dbConnection.createPreparedStatement(searchQuery);
 				break;
 			}
+			System.out.println(pstm);
 			resultSet = pstm.executeQuery();
 		// output query result 
 			while (resultSet != null && resultSet.next()) {
 				
 				title = resultSet.getString("title");
-				articleAbstract = resultSet.getString("abstract");
-				articlePath = resultSet.getString("article_file");
+				System.out.println(title);
+				articleID = Integer.parseInt(resultSet.getString("articleID"));
 				authorName = resultSet.getString("firstName") + " " + resultSet.getString("lastName");
-				OtherAuthors = resultSet.getString("Other_authors");
-				authorEmail = resultSet.getString("username");
-				keywords = resultSet.getString("keywords");
 				// to page
-				searchResults.add(new SearchResult(title, authorName, 
-						articleAbstract, articlePath, OtherAuthors, 
-						authorEmail, keywords));
-	
+				searchResults.add(new SearchResult(articleID ,title, authorName));
 			}
 			
 		} catch (SQLException e) {
@@ -149,37 +145,31 @@ public class SearchServlet extends HttpServlet {
 		req.setAttribute("results", searchResults);
 		req.setAttribute("search", "search");
 		req.getRequestDispatcher("search.jsp").forward(req, res);
-		
 	}
 	
 	private String getSearchByAuthorQuery() {
-		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
-				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+		return "SELECT B.articleID, B.title, A.firstName, A.lastName FROM author A "
 				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE (A.firstName "
 				+ "LIKE ? OR A.lastName LIKE ? OR B.Other_authors LIKE ?) AND "
 				+ "B.publication_id IS NOT NULL;";
 	}
 	private String getSearchByKeywordsQuery() {
-		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
-				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+		return "SELECT B.articleID, B.title, A.firstName, A.lastName FROM author A "
 				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE B.keywords "
 				+ "LIKE ? AND B.publication_id IS NOT NULL;";
 	}
 	private String getSearchByDateQuery() {
-		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
-				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+		return "SELECT B.articleID, B.title, A.firstName, A.lastName FROM author A "
 				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
 				+ "(publicationDate BETWEEN ? AND ?) AND B.publication_id IS NOT NULL;";
 	}
 	private String getSearchByTitleQuery() {
-		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
-				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+		return "SELECT B.articleID, B.title, A.firstName, A.lastName FROM author A "
 				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
 				+ "B.title LIKE ? AND B.publication_id IS NOT NULL;";
 	}
 	private String getAllQuery() {
-		return "SELECT B.title, B.keywords, A.username, A.firstName, A.lastName, "
-				+ "B.Other_authors, B.abstract, B.article_file FROM author A "
+		return "SELECT B.articleID, B.title, A.firstName, A.lastName FROM author A "
 				+ "INNER JOIN article B ON A.authorID = B.authorID WHERE "
 				+ "B.publication_id IS NOT NULL;";
 	}

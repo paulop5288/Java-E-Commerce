@@ -99,4 +99,12 @@
   	<servlet-name>Test</servlet-name>
   	<url-pattern>/Test</url-pattern>
   </servlet-mapping>
+    <servlet>
+  	<servlet-name>ShowSearch</servlet-name>
+  	<servlet-class>search.ShowSearch</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ShowSearch</servlet-name>
+  	<url-pattern>/showsearch.html</url-pattern>
+  </servlet-mapping>
 </web-app>
