@@ -44,11 +44,10 @@ public class SearchServlet extends HttpServlet {
 		
 		boolean isYear = false;
 		res.setContentType("text/html");
-		PrintWriter out = res.getWriter();
 
 		if (searchOption.equalsIgnoreCase("year")) {
 			try {
-				Integer.parseUnsignedInt(searchTerm);
+				Integer.parseInt(searchTerm);
 				if (searchTerm.length() != 4) {
 					isYear = false;
 				} else {

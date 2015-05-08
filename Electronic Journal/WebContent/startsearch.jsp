@@ -13,7 +13,7 @@
 			</td>
 		</tr>
 
-		<tr>
+		<tr> 
 			<td align="right">Search for :</td>
 			<td><input type="text" name="searchTerm" id="searchTerm">
 			</td>
