@@ -27,59 +27,59 @@ import javax.mail.PasswordAuthentication;
 
 import java.util.*;
 
-
 public class SignUpServlet extends HttpServlet {
 
-	private String email = "", password = "", cpassword = "", title = "", fname = "",
-			lname = "", qualification = "", organisation = "",
-			specialisation = "",message="";
-	private String curDir ="";
+	private String email = "", password = "", cpassword = "", title = "",
+			fname = "", lname = "", qualification = "", organisation = "",
+			specialisation = "", message = "";
+	private String curDir = "";
 	PrintWriter out;
-	//Article credentials
-	private String articleTitle="" , articleAbstract="",coauthors="",keywords="",filepath="uploads/";
+	// Article credentials
+	private String articleTitle = "", articleAbstract = "", coauthors = "",
+			keywords = "", filepath = "uploads/";
 	private File file;
 	InputStream inps = null;
 	private int maxFileSize = 10240000;
-	private int authorid=0;
-	private int  count = 0;
+	private int authorid = 0;
+	private int count = 0;
 	private Connection dbCon = null; // connection to a database
 	private String dbServer = "jdbc:mysql://stusql.dcs.shef.ac.uk/";
 	private String dbname = "team158";
 	private String user = "team158";
 	private String myPassword = "9a5b309d";
-	private String from = "pueze1@sheffield.ac.uk";
-    private String emailpassword="Kingrock1";
-    private String host = "smtp.gmail.com";
-    String to = "";
-    boolean sentmail=false;
-    private String subject = "Article Submission at IJSE";
+	private String from = "team08javaecommerce@gmail.com";
+	private String emailpassword = "stucat008";
+	private String host = "smtp.gmail.com";
+	private String to = "";
+	boolean sentmail = false;
+	private String subject = "Article Submission at IJSE";
 
 	public SignUpServlet() {
 		super();
 		// Load database driver
 		try {
-				Class.forName("com.mysql.jdbc.Driver");
-			} catch (ClassNotFoundException e) {
-				System.err.println("fail to load driver.");
-			}
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			System.err.println("fail to load driver.");
+		}
 
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		
-		//Prepare HTML page for output
+
+		// Prepare HTML page for output
 		res.setContentType("text/html");
 		out = res.getWriter();
 		ServletContext context = req.getServletContext();
 		filepath = context.getInitParameter("filepath");
-		curDir=req.getContextPath();
-		message="<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
-		out.println(message);message="";
-		
-				
-		//FOR: Servlet 3.0
-		articleTitle=req.getParameter("articletitle");
+		curDir = req.getContextPath();
+		message = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"major.css\"></head><body>";
+		out.println(message);
+		message = "";
+
+		// FOR: Servlet 3.0
+		articleTitle = req.getParameter("articletitle");
 		articleAbstract = req.getParameter("articleabstract");
 		coauthors = req.getParameter("coauthors");
 		keywords = req.getParameter("keywords");
@@ -90,133 +90,138 @@ public class SignUpServlet extends HttpServlet {
 		lname = req.getParameter("lname");
 		fname = req.getParameter("fname");
 		organisation = req.getParameter("organisation");
-		
-		//Generate password for Lead Author
+
+		// Generate password for Lead Author
 		String uuid = UUID.randomUUID().toString();
-		message+="<span class=\"success\">";
+		message += "<span class=\"success\">";
 		message += "<br/>";
-		uuid= uuid.substring(24, 36);
-		password=uuid;
+		uuid = uuid.substring(24, 36);
+		password = uuid;
 		// verify content type
 		String requestContentType = req.getContentType();
-		if((requestContentType.indexOf("multipart/form-data")>=0)){
+		if ((requestContentType.indexOf("multipart/form-data") >= 0)) {
 			DiskFileItemFactory dFactory = new DiskFileItemFactory();
 			dFactory.setSizeThreshold(maxFileSize);
-			
-			//Now create a new file upload handler
+
+			// Now create a new file upload handler
 			ServletFileUpload fUpload = new ServletFileUpload(dFactory);
 			fUpload.setSizeMax(maxFileSize);
-			String fieldName="",fieldValue;
-			try{
-				//Get the file items from the request
+			String fieldName = "", fieldValue;
+			try {
+				// Get the file items from the request
 				List<FileItem> fileItems = fUpload.parseRequest(req);
-				
-				//Now process the uploaded file items
+
+				// Now process the uploaded file items
 				Iterator<FileItem> i = fileItems.iterator();
-				while(i.hasNext()){
-					FileItem fItem = (FileItem)i.next();
-					if(!fItem.isFormField()){
-						//Get the uploaded file parameters and process them
+				while (i.hasNext()) {
+					FileItem fItem = (FileItem) i.next();
+					if (!fItem.isFormField()) {
+						// Get the uploaded file parameters and process them
 						message += "<p>Trying to upload submited Article...</p><hr/>";
 						String fileName = fItem.getName();
-						
-						//Stream will be saved to database as backup for file save.
+
+						// Stream will be saved to database as backup for file
+						// save.
 						inps = fItem.getInputStream();
-						if(inps!=null){
-							message += "Got the file:" + fItem.getName()+"<br/>";
-						}
-						else{
+						if (inps != null) {
+							message += "Got the file:" + fItem.getName()
+									+ "<br/>";
+						} else {
 							message += "Got NO file: Name=" + fItem.getName();
 						}
 						boolean isInMemory = fItem.isInMemory();
 						long byteSize = fItem.getSize();
-						
-						//Write the article to the articles folder
-						if(fileName.lastIndexOf("\\")>=0){
-							file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\" )));
+
+						// Write the article to the articles folder
+						if (fileName.lastIndexOf("\\") >= 0) {
+							file = new File(filepath
+									+ fileName.substring(fileName
+											.lastIndexOf("\\")));
+						} else {
+							file = new File(filepath
+									+ fileName.substring(fileName
+											.lastIndexOf("\\") + 1));
 						}
-						else{
-							file = new File(filepath + fileName.substring(fileName.lastIndexOf("\\") + 1));
-						}
-						//Saves to file
+						// Saves to file
 						fItem.write(file);
-						//message+= "File uploaded to:" + file.getAbsolutePath() +"<br/>";
+						// message+= "File uploaded to:" +
+						// file.getAbsolutePath() +"<br/>";
 						filepath = file.getPath();
-						
-					}
-					else{
+
+					} else {
 						// Process the other form fields submitted
-						fieldName=fItem.getFieldName();
+						fieldName = fItem.getFieldName();
 						fieldValue = fItem.getString();
-						switch(fieldName){
+						switch (fieldName) {
 						case "articletitle":
-							articleTitle=fieldValue; break;
+							articleTitle = fieldValue;
+							break;
 						case "articleabstract":
-							articleAbstract = fieldValue; break;
+							articleAbstract = fieldValue;
+							break;
 						case "coauthors":
-							coauthors=fieldValue; break;
+							coauthors = fieldValue;
+							break;
 						case "keywords":
-							keywords = fieldValue; break;
+							keywords = fieldValue;
+							break;
 						case "email":
-							email=fieldValue; break;
+							email = fieldValue;
+							break;
 						case "password":
-							password = fieldValue; break;
+							password = fieldValue;
+							break;
 						case "cpassword":
-							cpassword=fieldValue; break;
+							cpassword = fieldValue;
+							break;
 						case "fname":
-							fname = fieldValue; break;
+							fname = fieldValue;
+							break;
 						case "title":
-							title=fieldValue; break;
+							title = fieldValue;
+							break;
 						case "lname":
-							lname = fieldValue; break;
+							lname = fieldValue;
+							break;
 						case "organisation":
-							organisation = fieldValue; break;
+							organisation = fieldValue;
+							break;
 						default:
-							//message+= "<p>Unknown field added</p>";
+							// message+= "<p>Unknown field added</p>";
 						}
 					}
 				}
-				//message += "File Content is: " + inps + "<br/>";
-			}
-			catch(Exception ex){
-				message= ex.getMessage();
-				out.println("<span class=\"error\">Fileupload error: </span>" + message + ":"+ curDir);
+				// message += "File Content is: " + inps + "<br/>";
+			} catch (Exception ex) {
+				message = ex.getMessage();
+				out.println("<span class=\"error\">Fileupload error: </span>"
+						+ message + ":" + curDir);
 				return;
 			}
 		}
-		
-		
-				
-		
-		//Start session management here
+
+		// Start session management here
 		HttpSession session = req.getSession(true);
-		
 
 		if (email.trim().compareTo("") == 0) {
-			message="Email address cannot be empty.</body></html>";
+			message = "Email address cannot be empty.</body></html>";
 			out.println(message);
 			return;
 		}
 		/*
-		if (password.compareTo(cpassword) != 0) {
-			message="Password and Confirmed password should be the same.</body></html>";
-			out.println(message);
-			return;
-		}
-		if (password.trim().compareTo("") == 0) {
-			message="Password cannot be empty.</body></html>";
-			out.println(message);
-			return;
-		}
-		*/
+		 * if (password.compareTo(cpassword) != 0) { message=
+		 * "Password and Confirmed password should be the same.</body></html>";
+		 * out.println(message); return; } if (password.trim().compareTo("") ==
+		 * 0) { message="Password cannot be empty.</body></html>";
+		 * out.println(message); return; }
+		 */
 		if (fname.trim().compareTo("") == 0) {
-			message="First name cannot be empty.</body></html>";
+			message = "First name cannot be empty.</body></html>";
 			out.println(message);
 			return;
 		}
-		
-		
-		int count=0;
+
+		int count = 0;
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmtArticle = null;
 
@@ -224,14 +229,14 @@ public class SignUpServlet extends HttpServlet {
 			// Get connection to team database
 			dbCon = DriverManager.getConnection(dbServer + dbname, user,
 					myPassword);
-			
-			//Register new author only if not previously registered.
-			authorid= this.getAuthorId();
-			if(authorid== -1){
-				message="Could not upload article. Contact admininstrator on pueze1@sheffield.ac.uk.</body></html>";
+
+			// Register new author only if not previously registered.
+			authorid = this.getAuthorId();
+			if (authorid == -1) {
+				message = "Could not upload article. Contact admininstrator on pueze1@sheffield.ac.uk.</body></html>";
 				out.println(message);
 				return;
-				
+
 			}
 			if(authorid == 0){
 		
@@ -249,64 +254,65 @@ public class SignUpServlet extends HttpServlet {
 			pstmt.setString(8, specialisation);
 			count = pstmt.executeUpdate();
 			
-			}
-			if(count > 0){
+			
+			if (count > 0) {
 				authorid = this.getAuthorId();
-				message="Hello " + fname
-				+ ", You have succesfully registered as an author<br/>";
-				session.setAttribute("username",email);
-				session.setAttribute("password",password);
-				
-				out.println(message);
-			}
-			else{
-				session.setAttribute("username",email);
-				session.setAttribute("role","author");
-				message="Hello " + fname
-						+ ", You have previously registered as an author. Continue with your existing account details<br/>";
-				
-			}
-			//Handles article submission, However, we need a fileupload wrapper for this to work on this tomcat server
-			authorid=this.getAuthorId();
-			
-			//Retrieve file here, do upload and set corrected file name
-			
-			pstmtArticle = dbCon.prepareStatement(
-  				"INSERT INTO article(articleID,authorID,title,Other_authors,abstract,keywords,article_file) VALUES (null, ?, ?,?,?,?,?)");
-			pstmtArticle.setInt(1,authorid);
-			pstmtArticle.setString(2,articleTitle);
-			pstmtArticle.setString(3,coauthors);
-			pstmtArticle.setString(4,articleAbstract);
-			pstmtArticle.setString(5,keywords);
-			pstmtArticle.setString(6,filepath);
-			//pstmtArticle.setBlob(7,inps);
-			int count1 = 0;
-			count1=pstmtArticle.executeUpdate();
-			if(count1 > 0){
-				message+="Article submission was successful</br>";
-				session.setAttribute("article",articleTitle);
-				message += "Username: " + email+"<br/>";
-				to=email;
-				//Send email from here to author
-				sentmail = sendEmail();
-				if(sentmail && count >0  ){
-					
-						message += "Password: Sent to your email address." +"<br/>";
-					
-					
-				}
-				else{
-					message += "Password: " + uuid+", as we could not successfully send to your email adddress.<br/></span>";
-				}
-			}
-			
-			// Send Email here
-			
+				message = "Hello " + fname
+						+ ", You have succesfully registered as an author<br/>";
+				session.setAttribute("username", email);
+				session.setAttribute("password", password);
 
-		}catch (Exception ex) {
+				out.println(message);
+			} else {
+				session.setAttribute("username", email);
+				session.setAttribute("role", "author");
+				message = "Hello "
+						+ fname
+						+ ", You have previously registered as an author. Continue with your existing account details<br/>";
+
+			}
+			// Handles article submission, However, we need a fileupload wrapper
+			// for this to work on this tomcat server
+			authorid = this.getAuthorId();
+
+			// Retrieve file here, do upload and set corrected file name
+
+			pstmtArticle = dbCon
+					.prepareStatement("INSERT INTO article(articleID,authorID,title,Other_authors,abstract,keywords,article_file) VALUES (null, ?, ?,?,?,?,?)");
+			pstmtArticle.setInt(1, authorid);
+			pstmtArticle.setString(2, articleTitle);
+			pstmtArticle.setString(3, coauthors);
+			pstmtArticle.setString(4, articleAbstract);
+			pstmtArticle.setString(5, keywords);
+			pstmtArticle.setString(6, filepath);
+			// pstmtArticle.setBlob(7,inps);
+			int count1 = 0;
+			count1 = pstmtArticle.executeUpdate();
+			if (count1 > 0) {
+				message += "Article submission was successful</br>";
+				session.setAttribute("article", articleTitle);
+				message += "Username: " + email + "<br/>";
+				to = email;
+				// Send email from here to author
+				sentmail = sendEmail();
+				if (sentmail && count > 0) {
+
+					message += "Password: Sent to your email address."
+							+ "<br/>";
+
+				} else {
+					message += "Password: "
+							+ uuid
+							+ ", as we could not successfully send to your email adddress.<br/></span>";
+				}
+			}
+			}
+		}
+			catch (Exception ex) {
 
 			ex.printStackTrace();
-			out.println("<span class=\"error\">Article upload or Author Registration Error: </span>" + ex.getMessage());
+			out.println("<span class=\"error\">Article upload or Author Registration Error: </span>"
+					+ ex.getMessage());
 			return;
 		}
 
@@ -317,90 +323,88 @@ public class SignUpServlet extends HttpServlet {
 				} catch (SQLException ex) {
 				}
 		}
-		
-		message+="</body></html>";
+
+		message += "</body></html>";
 		out.println(message);
 	}
-	
-	
-	
-	
-	
-	//Sends email to author to give login credentials
-	public boolean sendEmail(){
-		boolean isSent=false;
+
+	// Sends email to author to give login credentials
+	public boolean sendEmail() {
+		boolean isSent = false;
 		try {
-        	
-	         Properties ps = new Properties();
-	         ps.setProperty("mail.host", "smtp.gmail.com");
-	         ps.setProperty("mail.smtp.port", "587");
-	         ps.setProperty("mail.smtp.auth", "true");
-	         ps.setProperty("mail.smtp.starttls.enable", "true");
 
-	         Session session1 = Session.getDefaultInstance(ps, new javax.mail.Authenticator() {
-	        	 
-	         protected PasswordAuthentication getPasswordAuthentication() {
-	         return new PasswordAuthentication(from,password);}
-	             
-	         });
+			Properties properties = new Properties();
+			properties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+			properties.setProperty("mail.host", "smtp.gmail.com");
+			properties.setProperty("mail.smtp.port", "587");
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.starttls.enable", "true");
 
-	         MimeMessage ms = new MimeMessage(session1);
-	         ms.setText(message);
-	         ms.setFrom(new InternetAddress(from));
-	         ms.setSubject(subject);
-	            
-	         ms.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-	         Transport transport = session1.getTransport("smtp");
-	         Transport.send(ms);
-	            
-	         transport.connect(host, from, emailpassword);
-	         transport.close();
-	           
-	         out.println("  The e-mail was sent successfully"); 
-	 
-	         isSent=true;
-			  
-		    }catch (Exception ex){
-	        
-	        
-		    	out.println("Error Sending Email: " + ex.getMessage() + "<br/>");
-	        } 
-			
-		 
-		
+			Session session = Session.getDefaultInstance(properties,
+					new javax.mail.Authenticator() {
+
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(from, password);
+						}
+
+					});
+
+			MimeMessage ms = new MimeMessage(session);
+			ms.setText(message);
+			ms.setFrom(new InternetAddress(from));
+			ms.setSubject(subject);
+
+			ms.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			Transport transport = session.getTransport("smtp");
+			Transport.send(ms);
+
+			transport.connect(host, from, emailpassword);
+			transport.close();
+
+			out.println("  The e-mail was sent successfully");
+
+			isSent = true;
+
+		} catch (MessagingException ex) {
+			isSent = false;
+			ex.printStackTrace();
+			out.println("There were an error: " + ex.getMessage());
+		}
+
 		return isSent;
 	}
-	public int getAuthorId(){
-		int authorid=0;
-		if(email==null || email.equals(""))
+
+	public int getAuthorId() {
+		int authorid = 0;
+		if (email == null || email.equals(""))
 			return authorid;
-		try{
+		try {
 			// Get connection to team database
 			dbCon = DriverManager.getConnection(dbServer + dbname, user,
-								myPassword);
+					myPassword);
 			Statement st = dbCon.createStatement();
-			ResultSet result = st.executeQuery("Select * FROM author WHERE username='"+ email + "'");
-			while(result.next()){
-				
-				authorid=result.getInt("authorID");
-				
+			ResultSet result = st
+					.executeQuery("Select * FROM author WHERE username='"
+							+ email + "'");
+			while (result.next()) {
+
+				authorid = result.getInt("authorID");
+
 			}
-			
-		}
-		catch (Exception ex) {
+
+		} catch (Exception ex) {
 
 			ex.printStackTrace();
 			out.print("Error while getting user id:" + ex.getMessage());
-			authorid=-1;
+			authorid = -1;
 			return authorid;
 		}
 
 		finally {
-			
+
 		}
-		
-		
+
 		return authorid;
-		
+
 	}
 }

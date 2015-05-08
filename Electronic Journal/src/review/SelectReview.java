@@ -74,6 +74,13 @@ public class SelectReview extends HttpServlet {
 			}
 			resp.setContentType("text/html");
 			resp.sendRedirect("myreview.jsp");
+		} else if (articleIDs == null) {
+			PrintWriter out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please select your review.\");");
+			out.println("window.location = 'selectreview.jsp';");
+			out.println("</script>");
 		} else {
 			PrintWriter out = resp.getWriter();
 			resp.setContentType("text/html");
@@ -96,7 +103,7 @@ public class SelectReview extends HttpServlet {
 				+ "AND article.authorID != ? AND article.passed_review + article.no_reviewer <= 5;";
 		try {
 
-			if (SelectReview.checkNumberOfReview(reviewerID)) {
+			if (SelectReview.checkNumberOfReview(SelectReview.getUnpaidArticleID(reviewerID))) {
 				pstm = dbConnection.createPreparedStatement(getArticleQuery);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, reviewerID);
@@ -138,18 +145,18 @@ public class SelectReview extends HttpServlet {
 		return articles;
 	}
 
-	public static boolean checkNumberOfReview(int reviewerID) {
-		String checkReviewQuery = "SELECT COUNT(review.reviewID) from review where review.reviewerID = ?;";
+	public static boolean checkNumberOfReview(int unpaidArticleID) {
+		String checkReviewQuery = "SELECT COUNT(reviewerID) from article_selection where submitted_Article_ID = ? AND status != \"selected\";";
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
 		try {
 			pstm = dbConnection.createPreparedStatement(checkReviewQuery);
-			pstm.setInt(1, reviewerID);
-			resultSet = dbConnection.executeQuery(pstm);
+			pstm.setInt(1, unpaidArticleID);
+			resultSet = pstm.executeQuery();
 			int count = 0;
 			if (resultSet.next()) {
-				count = resultSet.getInt("COUNT(review.reviewID)");
+				count = resultSet.getInt("COUNT(reviewerID)");
 			}
 			if (count < 3) {
 				return true;

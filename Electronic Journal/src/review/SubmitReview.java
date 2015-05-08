@@ -37,8 +37,20 @@ public class SubmitReview extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		
 		// should get from user
-		reviewerID = Integer.parseInt(req.getParameter("reviewer"));
-		articleID = Integer.parseInt(req.getParameter("article"));
+		String selectArticle = req.getParameter("article");
+		try {
+			reviewerID = Integer.parseInt(req.getParameter("reviewer"));
+			articleID = Integer.parseInt(selectArticle);
+		} catch (NumberFormatException e) {
+			out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please select the review you wanted to submit.\");");
+			out.println("window.location = 'review/reviewform.jsp';");
+			out.println("</script>");
+			return;
+		}
+		
 		
 		// review form
 		reviewerLevel = req.getParameter("level");
@@ -47,6 +59,23 @@ public class SubmitReview extends HttpServlet {
 		badPoints = req.getParameter("badpoint");
 		errors = req.getParameter("error");
 		score = req.getParameter("score");
+		if (reviewerLevel == null || articleAbstract == null || contribution == null || badPoints == null || errors == null || score == null) {
+			out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please fill in all required area.\");");
+			out.println("window.location = 'review/reviewform.jsp';");
+			out.println("</script>");
+			return;
+		} else if (articleAbstract.length() == 0 || contribution.length() == 0 || badPoints.length() == 0 || errors.length() == 0) {
+			out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please fill in all required area.\");");
+			out.println("window.location = 'review/reviewform.jsp';");
+			out.println("</script>");
+			return;
+		}
 		
 		DBConnection dbConnection = new DBConnection();
 		PreparedStatement pstm = null;

@@ -37,7 +37,6 @@ public class CancelSelection extends HttpServlet {
 			pstm.setString(3, "selected");
 			resultSet = pstm.executeQuery();
 			if (resultSet.next()) {
-				System.out.println(pstm.toString());
 				pstm = dbConnection.createPreparedStatement(query);
 				pstm.setInt(1, reviewerID);
 				pstm.setInt(2, articleID);

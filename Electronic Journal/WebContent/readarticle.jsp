@@ -13,14 +13,15 @@
 	<%@ page import="review.*"%>
 	<%@ page import="database.*"%>
 	<%@ page import="search.*"%>
-	<% 
-	ArrayList<SearchResult> results = (ArrayList<SearchResult>)request.getAttribute("results");
-	String key = (String)request.getAttribute("search");
-	if (key == null || results == null) {
-		response.sendRedirect(request.getContextPath() + "/index.jsp");
-		return;
-	}
-	
+	<%
+		ArticleDetail detail = (ArticleDetail) request
+				.getAttribute("detail");
+
+		if (detail == null) {
+			response.sendRedirect(request.getContextPath()
+					+ "/noresult.jsp");
+			return;
+		}
 	%>
 	<div id="banner">
 		<h1>International Journal of Software Engineering</h1>
@@ -39,45 +40,30 @@
 	</div>
 	<div id="maincontent">
 		<div id="leftdiv">
-		<%
-		if (results.size() != 0) {
-			int i = 1;
-			%>
-			<div id="result">
-				<table style="width: 100%">
-					<tr>
-						<th>No.</th>
-						<th>title</th>
-						<th>author</th>
-					</tr>
-			<%
-			for (SearchResult result : results) {
-				%>
-				<tr>
-						<th><%= i %></th>
-						<th><a href=<%= "http://localhost:8080/Electronic%20Journal/showsearch.html?articleID="+result.getArticleID() %>><%= result.getTitle() %></a></th>
-						<th><%= result.getAuthorName() %></th>
-				</tr>
-				<%
-				i++;
-			}
-			%>
-			</table>
-			</div>
-			<%
+			<hr>
+			<br>
+			<td><h3>
+					The title is :
+					<%=detail.getTitle()%>
+				</h3></td>
+			<h4>
+				Keywords :
+				<%=detail.getKeywords()%></h4>
+			<h4>
+				The summary :
+				<%=detail.getArticleAbstract()%></h4>
+			<h4>
+				Email :
+				<%=detail.getEmail()%></h4>
+			<form action="../download.html" method="post">
+				<h4>
+					Download : <input type="hidden" name="articleID"
+						value=<%=detail.getArticleID()%>> <input type="hidden"
+						name="role" value="reader"> <input type="submit"
+						value="download">
 
-			
-		} else {
-			response.sendRedirect(request.getContextPath() + "/noresult.jsp");
-			return;
-		}
-		
-		
-		
-		%>
-		
-		
-		
+				</h4>
+			</form>
 		</div>
 		<!--End of left div -->
 	</div>

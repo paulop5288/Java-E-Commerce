@@ -43,6 +43,7 @@ public class Selection {
 		PreparedStatement pstm = null;
 		ResultSet resultSet = null;
 		try {
+			
 			pstm = dbConnection.createPreparedStatement(query);
 			pstm.setInt(1, unpaidArticleID);
 			resultSet = dbConnection.executeQuery(pstm);

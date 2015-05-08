@@ -30,15 +30,17 @@ public class LogoutServlet extends HttpServlet {
 			role = (String) session.getAttribute("role");
 			if (role.equalsIgnoreCase("author")) {
 				// back to author home page
+				resp.sendRedirect("author.jsp");
 			} else if (role.equalsIgnoreCase("reviewer")) {
 				resp.sendRedirect("reviewer.jsp");
 			} else {
 				// back to home page
+				resp.sendRedirect("index.jsp");
 			}
 			session.invalidate();
 		} else {
 			// back to home page
-			resp.sendRedirect("reviewer.jsp");
+			resp.sendRedirect("index.jsp");
 		}
 	}
 }

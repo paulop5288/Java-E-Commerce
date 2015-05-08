@@ -18,13 +18,14 @@
 		String username = (String) session.getAttribute("username");
 		String role = (String)session.getAttribute("role");
 		User reviewer = null;
-		if (username == null || role == null) {
+		if (username == null || role == null || !role.equalsIgnoreCase("reviewer")) {
 			response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
 			return;
 		} else {
 			reviewer = new User(username, "");
 			if (!SelectReview.isReviewer(reviewer.getID())) {
 				response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+				session.invalidate();
 				return;
 			}
 		}
@@ -61,7 +62,7 @@
 		<id="leftdiv">
 		<div id="select">
 			<%
-				if (!SelectReview.checkNumberOfReview(reviewer.getID())) {
+				if (!SelectReview.checkNumberOfReview(SelectReview.getUnpaidArticleID(reviewer.getID()))) {
 			%>
 			<p>
 				You have selected 3 articles for review.<br> Please submit your
