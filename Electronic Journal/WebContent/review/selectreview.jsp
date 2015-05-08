@@ -18,13 +18,14 @@
 		String username = (String) session.getAttribute("username");
 		String role = (String)session.getAttribute("role");
 		User reviewer = null;
-		if (username == null || role == null) {
+		if (username == null || role == null || !role.equalsIgnoreCase("reviewer")) {
 			response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
 			return;
 		} else {
 			reviewer = new User(username, "");
 			if (!SelectReview.isReviewer(reviewer.getID())) {
 				response.sendRedirect(request.getContextPath() + "/reviewer.jsp");
+				session.invalidate();
 				return;
 			}
 		}

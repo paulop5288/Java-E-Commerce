@@ -67,6 +67,14 @@ public class SubmitReview extends HttpServlet {
 			out.println("window.location = 'review/reviewform.jsp';");
 			out.println("</script>");
 			return;
+		} else if (articleAbstract.length() == 0 || contribution.length() == 0 || badPoints.length() == 0 || errors.length() == 0) {
+			out = resp.getWriter();
+			resp.setContentType("text/html");
+			out.println("<script type=\"text/javascript\">");
+			out.println("alert(\"Please fill in all required area.\");");
+			out.println("window.location = 'review/reviewform.jsp';");
+			out.println("</script>");
+			return;
 		}
 		
 		DBConnection dbConnection = new DBConnection();
