@@ -41,12 +41,12 @@ public class LoginServlet extends HttpServlet {
 				// Start session management here
 				HttpSession session = req.getSession();
 				session.setAttribute("username", username);
-				session.setMaxInactiveInterval(5*60); // 5 min
+				session.setMaxInactiveInterval(20*60); // 20 min
 				session.setAttribute("role", "author");
 
 				res.setContentType("text/html");
 				Cookie userName = new Cookie("username", username);
-				userName.setMaxAge(5*60);
+				userName.setMaxAge(20*60);
 				res.addCookie(userName);
 				res.setContentType("text/html");
 				out.println("<script type=\"text/javascript\">");
@@ -67,12 +67,12 @@ public class LoginServlet extends HttpServlet {
 				// Start session management here
 				HttpSession session = req.getSession();
 				session.setAttribute("username", username);
-				session.setMaxInactiveInterval(5*60); // 5 min
+				session.setMaxInactiveInterval(20*60); // 20min
 				session.setAttribute("role", "reviewer");
 
 				res.setContentType("text/html");
 				Cookie userName = new Cookie("username", username);
-				userName.setMaxAge(5*60);
+				userName.setMaxAge(20*60);
 				res.addCookie(userName);
 				res.sendRedirect("review/selectreview.jsp");
 				System.out.println("sucessful. reviewer");

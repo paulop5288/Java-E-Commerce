@@ -41,6 +41,7 @@ public class PasswordServlet extends HttpServlet {
 		String oldPassword = request.getParameter("oldpassword");
 		String newPassword = request.getParameter("password");
 		String confirmedPassword = request.getParameter("cpassword");
+		PrintWriter out = response.getWriter();
 		String query = "update author set password = '" + newPassword + "'"
 						+ " where username = '" + username + "' and " + "password = '" + oldPassword + "';";
 		Connection con = null;
@@ -48,7 +49,6 @@ public class PasswordServlet extends HttpServlet {
 		boolean userIsMatched = false;
 		if (newPassword.compareTo(confirmedPassword) != 0) {
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
 			out.println("<html><body>");
 			out.println("New Password and Confirmed Password are not the same.");
 			out.println("</body></html>");
@@ -56,7 +56,7 @@ public class PasswordServlet extends HttpServlet {
 		}
 		if (newPassword.trim().compareTo("") == 0) {
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
+			
 			out.println("<html><body>");
 			out.println("New Password cannot be empty.");
 			out.println("</body></html>");
@@ -75,7 +75,8 @@ public class PasswordServlet extends HttpServlet {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-		} finally {
+			out.println("Error:" + e1.getMessage());
+			} finally {
 			try {
 				if (stmt != null) {
 					stmt.close();
@@ -89,17 +90,17 @@ public class PasswordServlet extends HttpServlet {
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+				out.println("Error:" + e.getMessage());
 			}
 		}
 		if (userIsMatched) {
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
 			out.println("<html><body>");
 			out.println("Hello " + username + ", you have changed the password.");
 			out.println("</body></html>");
 		} else {
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
+			
 			out.println("<html><body>");
 			out.println("Invalid username or password.");
 			out.println("</body></html>");

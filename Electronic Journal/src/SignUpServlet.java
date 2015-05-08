@@ -237,7 +237,8 @@ public class SignUpServlet extends HttpServlet {
 		
 			pstmt = dbCon
 
-					.prepareStatement("INSERT INTO author VALUES (null, ?, ?,?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO author(authorID,username,password,title,firstName,lastName"
+							+ ",qualification,organisation,specialisation) VALUES (null, ?, ?,?,?,?,?,?,?)");
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
 			pstmt.setString(3, title);
@@ -323,49 +324,7 @@ public class SignUpServlet extends HttpServlet {
 	
 	
 	
-	//Returns articles in the database that requires review
-	public List<String> getArticles(){
-		String articleslist="<table>";
-		List<String> articles = new ArrayList<String>();
-		try{
-			// Get connection to team database
-			dbCon = DriverManager.getConnection(dbServer + dbname, user,
-								myPassword);
-			Statement st = dbCon.createStatement();
-			ResultSet result = st.executeQuery("Select * FROM article");
-			while(result.next()){
-				articleslist+= "<tr>";
-				articles.add(result.getString("title"));
-				articleslist+= "<td>"+result.getString("title")+"</td>";
-				articles.add(result.getString("Other_authors"));
-				articles.add(result.getString("abstract"));
-				articleslist+= "<td>"+result.getString("abstract")+"</td>";
-				articles.add(result.getString("keywords"));
-				articleslist+= "<td>"+result.getString("keywords")+"</td>";
-				articles.add(result.getString("article_file"));
-				 articleslist+="<td><a href=\""+result.getString("article_file")
-		          + "\">" + "</a></td></tr>";
-			}
-			
-		}
-		catch (Exception ex) {
-
-			ex.printStackTrace();
-			return articles;
-		}
-
-		finally {
-			if (dbCon != null)
-				try {
-					dbCon.close();
-				} catch (SQLException ex) {
-				}
-		}
-		
-		
-		return articles;
-		
-	}
+	
 	
 	//Sends email to author to give login credentials
 	public boolean sendEmail(){
@@ -401,10 +360,10 @@ public class SignUpServlet extends HttpServlet {
 	 
 	         isSent=true;
 			  
-		    }catch (MessagingException ex){
+		    }catch (Exception ex){
 	        
-	        ex.printStackTrace();
-	        out.println("There were an error: " + ex.getMessage());
+	        
+		    	out.println("Error Sending Email: " + ex.getMessage() + "<br/>");
 	        } 
 			
 		 
